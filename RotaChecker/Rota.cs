@@ -21,6 +21,7 @@ namespace RotaChecker
             Shifts = new List<Shift> { a, b, c, d, e };
             RotaStartTime = Shifts.Select(s => s.StartTime).Min();
             RotaEndTime = Shifts.Select(s => s.EndTime).Max();
+            Length = RotaEndTime - RotaStartTime;
 
             WeekNumberStart = cal.GetWeekOfYear(RotaStartTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
             WeekNumberEnd = cal.GetWeekOfYear(RotaEndTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday); 
@@ -85,6 +86,69 @@ namespace RotaChecker
                 return false;
             }
             
+        }
+
+        public bool Max72Per168()
+        {
+            for(int i = 0; i < Length.Days; i++)
+            {
+                //Get midnight on the first day to be checked
+                DateTime setMidnight = new DateTime(RotaStartTime.Year, RotaStartTime.Month, RotaStartTime.Day);
+
+                //Select the next date to be cycled through and add 7 days
+                DateTime currentDateTime = setMidnight.AddDays(i);
+                DateTime plus7Days = currentDateTime.AddDays(7);
+
+                //If there are less than 7 days remaining, then there is no need to check further
+                if(DateTime.Compare(RotaEndTime, plus7Days) < 0)
+                {
+                    break;
+                }
+
+                double thisWeeklyHours = 0;
+                Console.WriteLine($"Checking {currentDateTime} to {plus7Days}");
+
+                //Selects all the shifts with start or end time within window
+                var thisWeekShifts = Shifts.Where(y =>(DateTime.Compare(currentDateTime, y.StartTime) <= 0 && DateTime.Compare(plus7Days, y.StartTime) > 0) || (DateTime.Compare(currentDateTime, y.EndTime) < 0 && DateTime.Compare(plus7Days, y.EndTime) >= 0));
+                             
+                Console.WriteLine($"{thisWeekShifts.Count()} shifts found");
+
+                foreach(Shift s in thisWeekShifts)
+                {
+                    //check whether it is fully in the time period
+                    if(DateTime.Compare(currentDateTime, s.StartTime) <= 0 && DateTime.Compare(plus7Days, s.EndTime) >= 0)
+                    {
+                        thisWeeklyHours += s.Length.TotalHours;
+                    }
+                    else if (DateTime.Compare(currentDateTime, s.StartTime) > 0 && DateTime.Compare(plus7Days, s.EndTime) >= 0)
+                    {
+                        
+                        //starts before start but finishes after
+                        TimeSpan partialShift = s.EndTime - currentDateTime;
+                        thisWeeklyHours += partialShift.TotalHours;
+                    }
+                    else if(DateTime.Compare(currentDateTime, s.StartTime) <= 0 && DateTime.Compare(plus7Days, s.EndTime) < 0)
+                    {
+                        //starts before end but finishes after
+                        TimeSpan partialShift = plus7Days - s.StartTime;
+                        thisWeeklyHours += partialShift.TotalHours;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Something went wrong");
+                    }
+                }
+
+                Console.WriteLine($"The 7 day period has {thisWeeklyHours} hours");
+
+                if(thisWeeklyHours > 72)
+                {
+                    return false;
+                }
+
+            }
+            
+            return true;
         }
 
     }
