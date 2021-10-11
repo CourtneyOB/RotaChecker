@@ -11,20 +11,14 @@ namespace RotaChecker
         public List<Shift> Shifts { get; set; }
         public DateTime RotaStartTime { get; set; }
         public DateTime RotaEndTime { get; set; }
-        public TimeSpan Length { get;  }
-        public int WeekNumberStart { get; }
-        public int WeekNumberEnd { get; }
+        public TimeSpan Length { get; private set; }
+        public int WeekNumberStart { get; private set; }
+        public int WeekNumberEnd { get; private set; }
         private static Calendar cal = CultureInfo.InvariantCulture.Calendar;
 
-        public Rota(Shift a, Shift b, Shift c, Shift d, Shift e)
+        public Rota()
         {
-            Shifts = new List<Shift> { a, b, c, d, e };
-            RotaStartTime = Shifts.Select(s => s.StartTime).Min();
-            RotaEndTime = Shifts.Select(s => s.EndTime).Max();
-            Length = RotaEndTime - RotaStartTime;
-
-            WeekNumberStart = cal.GetWeekOfYear(RotaStartTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
-            WeekNumberEnd = cal.GetWeekOfYear(RotaEndTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday); 
+            Shifts = new List<Shift>();
 
         }        
 
@@ -55,6 +49,17 @@ namespace RotaChecker
                 }
             }
             return response;
+        }
+
+        public void AddShift(Shift s)
+        {
+            Shifts.Add(s);
+            RotaStartTime = Shifts.Select(s => s.StartTime).Min();
+            RotaEndTime = Shifts.Select(s => s.EndTime).Max();
+            Length = RotaEndTime - RotaStartTime;
+
+            WeekNumberStart = cal.GetWeekOfYear(RotaStartTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
+            WeekNumberEnd = cal.GetWeekOfYear(RotaEndTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
         }
 
         public bool Max48PerWeek()
