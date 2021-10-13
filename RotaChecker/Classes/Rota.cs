@@ -192,36 +192,60 @@ namespace RotaChecker
                     //If there are 4 more shifts after
                     if (Shifts.Count >= i + 5)
                     {
+
                         List<Shift> setOfFive = Shifts.GetRange(i, 5);
 
-                        //5 in a row returns fail test
-                        if (Shifts[i].Long && Shifts[i + 1].Long && Shifts[i + 2].Long && Shifts[i + 3].Long && Shifts[i + 4].Long)
+                        //Check if consecutive
+
+                        DateTime day1 = new DateTime(setOfFive[0].StartTime.Year, setOfFive[0].StartTime.Month, setOfFive[0].StartTime.Day);
+                        DateTime day4 = new DateTime(setOfFive[3].StartTime.Year, setOfFive[3].StartTime.Month, setOfFive[3].StartTime.Day);
+
+                        if (DateTime.Compare(day1.AddDays(3), day4) >= 0)
                         {
-                            return false;
-                        }
-
-                        //4 in a row will check whether breaks are adhered to
-                        if (Shifts[i].Long && Shifts[i + 1].Long && Shifts[i + 2].Long && Shifts[i + 3].Long)
-                        {
-                            //Check if break will be after 4th or 5th shift
-
-                            bool noEvenings = (!Shifts[i].EveningFinish && !Shifts[i + 1].EveningFinish && !Shifts[i + 2].EveningFinish && !Shifts[i + 3].EveningFinish);
-                            bool noNights = (!Shifts[i].Night && !Shifts[i + 1].Night && !Shifts[i + 2].Night && !Shifts[i + 3].Night);
-
-                            if (noEvenings && noNights)
+                            //5 in a row returns fail test
+                            if (Shifts[i].Long && Shifts[i + 1].Long && Shifts[i + 2].Long && Shifts[i + 3].Long && Shifts[i + 4].Long)
                             {
-                                if(Shifts.Count >= i + 6)
+                                return false;
+                            }
+
+                            //4 in a row will check whether breaks are adhered to
+                            if (Shifts[i].Long && Shifts[i + 1].Long && Shifts[i + 2].Long && Shifts[i + 3].Long)
+                            {
+
+                                //Check if break will be after 4th or 5th shift
+
+                                bool noEvenings = (!Shifts[i].EveningFinish && !Shifts[i + 1].EveningFinish && !Shifts[i + 2].EveningFinish && !Shifts[i + 3].EveningFinish);
+                                bool noNights = (!Shifts[i].Night && !Shifts[i + 1].Night && !Shifts[i + 2].Night && !Shifts[i + 3].Night);
+
+                                if (noEvenings && noNights)
                                 {
-                                    //Can work another
-                                    List<Shift> setOfSix = Shifts.GetRange(i, 6);
-                                    Console.WriteLine($"Break Required after {Shifts[i + 4].EndTime} - {CheckBreakRule(setOfSix)}");
+                                    if (Shifts.Count >= i + 6)
+                                    {
+                                        //Can work another
+                                        List<Shift> setOfSix = Shifts.GetRange(i, 6);
+
+                                        //Check if 5th is consecutive
+                                        DateTime day1b = new DateTime(setOfSix[0].StartTime.Year, setOfSix[0].StartTime.Month, setOfSix[0].StartTime.Day);
+                                        DateTime day5b = new DateTime(setOfSix[4].StartTime.Year, setOfSix[4].StartTime.Month, setOfSix[4].StartTime.Day);
+
+                                        if (DateTime.Compare(day1b.AddDays(4), day5b) >= 0)
+                                        {
+                                            Console.WriteLine($"Break Required after {Shifts[i + 4].EndTime} - {CheckBreakRule(setOfSix)}");
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine($"Break Required after {Shifts[i + 4].EndTime}");
+                                        }
+                                            
+                                    }
+                                }
+                                else
+                                {
+                                    Console.WriteLine($"Break Required after {Shifts[i + 3].EndTime} - {CheckBreakRule(setOfFive)}");
                                 }
                             }
-                            else
-                            {
-                                Console.WriteLine($"Break Required after {Shifts[i + 3].EndTime} - {CheckBreakRule(setOfFive)}");
-                            }      
                         }
+
                     }
 
                 }
@@ -231,6 +255,8 @@ namespace RotaChecker
 
         public bool CheckBreakRule(List<Shift> shifts)
         {
+            Console.WriteLine("Checking breaks...");
+
             int breakCode = 0;
             List<Shift> setOfFour = shifts.GetRange(0, 4);
 
