@@ -4,9 +4,9 @@ using System.Text;
 
 namespace RotaChecker
 {
-    class RotaBuilder
+    static class RotaBuilder
     {
-        internal Rota CreateRota()
+        static internal Rota CreateRota()
         {
             //Need validation for this - make sure shifts not overlapping, that end time is after start time etc.
             Rota rota = new Rota();

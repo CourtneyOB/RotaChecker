@@ -6,7 +6,7 @@ using System.Globalization;
 
 namespace RotaChecker
 {
-    class Rota
+    public class Rota : CalendarBase
     {
         public List<Shift> Shifts { get; set; }
         public DateTime RotaStartTime { get; set; }
@@ -14,7 +14,8 @@ namespace RotaChecker
         public TimeSpan Length { get; private set; }
         public int WeekNumberStart { get; private set; }
         public int WeekNumberEnd { get; private set; }
-        private static Calendar cal = CultureInfo.InvariantCulture.Calendar;
+
+        //Methods
 
         public Rota()
         {
@@ -58,9 +59,11 @@ namespace RotaChecker
             RotaEndTime = Shifts.Select(s => s.EndTime).Max();
             Length = RotaEndTime - RotaStartTime;
 
-            WeekNumberStart = cal.GetWeekOfYear(RotaStartTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
-            WeekNumberEnd = cal.GetWeekOfYear(RotaEndTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
+            WeekNumberStart = Calendar.GetWeekOfYear(RotaStartTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
+            WeekNumberEnd = Calendar.GetWeekOfYear(RotaEndTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
         }
+
+        //Tests
 
         public bool Max48PerWeek()
         {

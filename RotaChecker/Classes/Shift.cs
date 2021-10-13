@@ -5,7 +5,7 @@ using System.Globalization;
 
 namespace RotaChecker
 {
-    public class Shift
+    public class Shift : CalendarBase
     {
         public DateTime StartTime { get; }
         public DateTime EndTime { get; }
@@ -13,8 +13,6 @@ namespace RotaChecker
         public bool Weekend { get; }
         public bool Night { get; }
         public int WeekNumber { get; }
-        private static Calendar cal = CultureInfo.InvariantCulture.Calendar;
-
 
         public Shift(DateTime start, DateTime end)
         {
@@ -41,7 +39,7 @@ namespace RotaChecker
             }
 
             //assign week number
-            WeekNumber = cal.GetWeekOfYear(StartTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
+            WeekNumber = Calendar.GetWeekOfYear(StartTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
 
         }
 

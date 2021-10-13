@@ -8,8 +8,7 @@ namespace RotaChecker
         static void Main(string[] args)
         {
 
-            RotaBuilder myBuilder = new RotaBuilder();
-            Rota rota = myBuilder.CreateRota();
+            Rota rota = RotaBuilder.CreateRota();
 
             //List<string> text = rota.Describe();
             //foreach(string s in text)
