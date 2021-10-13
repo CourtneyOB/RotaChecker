@@ -12,6 +12,7 @@ namespace RotaChecker
         public TimeSpan Length { get; }
         public bool Weekend { get; }
         public bool Night { get; }
+        public bool Long { get;  }
         public int WeekNumber { get; }
 
         public Shift(DateTime start, DateTime end)
@@ -36,6 +37,15 @@ namespace RotaChecker
             else
             {
                 Night = false;
+            }
+
+            if(Length.TotalHours > 10)
+            {
+                Long = true;
+            }
+            else
+            {
+                Long = false;
             }
 
             //assign week number

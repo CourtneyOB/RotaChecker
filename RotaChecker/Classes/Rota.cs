@@ -67,6 +67,8 @@ namespace RotaChecker
 
         public bool Max48PerWeek()
         {
+            Console.WriteLine("Checking max average 48 hours per week...");
+
             List<double> AllWeeklyHours = new List<double>();
 
             for(int i = WeekNumberStart; i <= WeekNumberEnd; i++)
@@ -98,47 +100,49 @@ namespace RotaChecker
 
         public bool Max72Per168()
         {
-            for(int i = 0; i < Length.Days; i++)
+            Console.WriteLine("Checking max 72 hours per 168 hour period...");
+
+            for (int i = 0; i < Length.Days; i++)
             {
                 //Get midnight on the first day to be checked
                 DateTime setMidnight = new DateTime(RotaStartTime.Year, RotaStartTime.Month, RotaStartTime.Day);
 
                 //Select the next date to be cycled through and add 7 days
-                DateTime currentDateTime = setMidnight.AddDays(i);
-                DateTime plus7Days = currentDateTime.AddDays(7);
+                DateTime startDateTime = setMidnight.AddDays(i);
+                DateTime endDateTime = startDateTime.AddDays(7);
 
                 //If there are less than 7 days remaining, then there is no need to check further
-                if(DateTime.Compare(RotaEndTime, plus7Days) < 0)
+                if(DateTime.Compare(RotaEndTime, endDateTime) < 0)
                 {
                     break;
                 }
 
                 double thisWeeklyHours = 0;
-                Console.WriteLine($"Checking {currentDateTime} to {plus7Days}");
+                Console.WriteLine($"Checking {startDateTime} to {endDateTime}");
 
                 //Selects all the shifts with start or end time within window
-                var thisWeekShifts = Shifts.Where(y =>(DateTime.Compare(currentDateTime, y.StartTime) <= 0 && DateTime.Compare(plus7Days, y.StartTime) > 0) || (DateTime.Compare(currentDateTime, y.EndTime) < 0 && DateTime.Compare(plus7Days, y.EndTime) >= 0));
+                var thisWeekShifts = Shifts.Where(y =>(DateTime.Compare(startDateTime, y.StartTime) <= 0 && DateTime.Compare(endDateTime, y.StartTime) > 0) || (DateTime.Compare(startDateTime, y.EndTime) < 0 && DateTime.Compare(endDateTime, y.EndTime) >= 0));
                              
                 Console.WriteLine($"{thisWeekShifts.Count()} shifts found");
 
                 foreach(Shift s in thisWeekShifts)
                 {
                     //check whether it is fully in the time period
-                    if(DateTime.Compare(currentDateTime, s.StartTime) <= 0 && DateTime.Compare(plus7Days, s.EndTime) >= 0)
+                    if(DateTime.Compare(startDateTime, s.StartTime) <= 0 && DateTime.Compare(endDateTime, s.EndTime) >= 0)
                     {
                         thisWeeklyHours += s.Length.TotalHours;
                     }
-                    else if (DateTime.Compare(currentDateTime, s.StartTime) > 0 && DateTime.Compare(plus7Days, s.EndTime) >= 0)
+                    else if (DateTime.Compare(startDateTime, s.StartTime) > 0 && DateTime.Compare(endDateTime, s.EndTime) >= 0)
                     {
                         
                         //starts before start but finishes after
-                        TimeSpan partialShift = s.EndTime - currentDateTime;
+                        TimeSpan partialShift = s.EndTime - startDateTime;
                         thisWeeklyHours += partialShift.TotalHours;
                     }
-                    else if(DateTime.Compare(currentDateTime, s.StartTime) <= 0 && DateTime.Compare(plus7Days, s.EndTime) < 0)
+                    else if(DateTime.Compare(startDateTime, s.StartTime) <= 0 && DateTime.Compare(endDateTime, s.EndTime) < 0)
                     {
                         //starts before end but finishes after
-                        TimeSpan partialShift = plus7Days - s.StartTime;
+                        TimeSpan partialShift = endDateTime - s.StartTime;
                         thisWeeklyHours += partialShift.TotalHours;
                     }
                     else
@@ -155,6 +159,27 @@ namespace RotaChecker
                 }
 
             }
+            
+            return true;
+        }
+
+        public bool Max13HourShift()
+        {
+            Console.WriteLine("Checking max 13 hours per shift...");
+
+            foreach (Shift s in Shifts)
+            {
+                if(s.Length.TotalHours > 13)
+                {
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
+        public bool Max4LongShifts()
+        {
             
             return true;
         }

@@ -16,11 +16,15 @@ namespace RotaChecker
             //    Console.WriteLine(s);
             //}
 
-            Console.WriteLine($"The rota starts at {rota.RotaStartTime} and ends at {rota.RotaEndTime}. The length is {rota.Length}");
+            
+            //Length of rota period to be checking - affects average weekly hours
+            Console.WriteLine($"The rota starts at {rota.RotaStartTime} and ends at {rota.RotaEndTime}. The length is {rota.Length.TotalDays} days");
 
-            //Console.WriteLine(rota.Max48PerWeek());
+            Console.WriteLine(rota.Max48PerWeek());
 
-            //Console.WriteLine(rota.Max72Per168());
+            Console.WriteLine(rota.Max72Per168());
+
+            Console.WriteLine(rota.Max13HourShift());
 
 
 
