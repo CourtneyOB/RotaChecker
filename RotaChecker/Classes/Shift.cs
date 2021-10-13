@@ -13,6 +13,7 @@ namespace RotaChecker
         public bool Weekend { get; }
         public bool Night { get; }
         public bool Long { get;  }
+        public bool EveningFinish { get; }
         public int WeekNumber { get; }
 
         public Shift(DateTime start, DateTime end)
@@ -46,6 +47,15 @@ namespace RotaChecker
             else
             {
                 Long = false;
+            }
+
+            if(EndTime.Hour >= 23 || EndTime.Hour < 2)
+            {
+                EveningFinish = true;
+            }
+            else
+            {
+                EveningFinish = false;
             }
 
             //assign week number

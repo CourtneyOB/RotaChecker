@@ -180,8 +180,123 @@ namespace RotaChecker
 
         public bool Max4LongShifts()
         {
-            
+
+            Console.WriteLine("Checking max 4 long shifts consecutively...");
+
+            //Cycle through all shifts
+            for (int i = 0; i < Shifts.Count-1; i++)
+            {
+                //If a long shift is found
+                if (Shifts[i].Long)
+                {
+                    //If there are 4 more shifts after
+                    if (Shifts.Count >= i + 5)
+                    {
+                        List<Shift> setOfFive = Shifts.GetRange(i, 5);
+
+                        //5 in a row returns fail test
+                        if (Shifts[i].Long && Shifts[i + 1].Long && Shifts[i + 2].Long && Shifts[i + 3].Long && Shifts[i + 4].Long)
+                        {
+                            return false;
+                        }
+
+                        //4 in a row will check whether breaks are adhered to
+                        if (Shifts[i].Long && Shifts[i + 1].Long && Shifts[i + 2].Long && Shifts[i + 3].Long)
+                        {
+                            //Check if break will be after 4th or 5th shift
+
+                            bool noEvenings = (!Shifts[i].EveningFinish && !Shifts[i + 1].EveningFinish && !Shifts[i + 2].EveningFinish && !Shifts[i + 3].EveningFinish);
+                            bool noNights = (!Shifts[i].Night && !Shifts[i + 1].Night && !Shifts[i + 2].Night && !Shifts[i + 3].Night);
+
+                            if (noEvenings && noNights)
+                            {
+                                if(Shifts.Count >= i + 6)
+                                {
+                                    //Can work another
+                                    List<Shift> setOfSix = Shifts.GetRange(i, 6);
+                                    Console.WriteLine($"Break Required after {Shifts[i + 4].EndTime} - {CheckBreakRule(setOfSix)}");
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine($"Break Required after {Shifts[i + 3].EndTime} - {CheckBreakRule(setOfFive)}");
+                            }      
+                        }
+                    }
+
+                }
+            }
             return true;
+        }
+
+        public bool CheckBreakRule(List<Shift> shifts)
+        {
+            int breakCode = 0;
+            List<Shift> setOfFour = shifts.GetRange(0, 4);
+
+            // 0 = 48hours after 5th shift
+            // 1 = 48hours after 4th shift
+            // 2 = 46hours after 4th shift
+
+            foreach (Shift s in setOfFour)
+            {
+                if (s.Night)
+                {
+                    breakCode = 2;
+                    break;
+                }
+                if (s.EveningFinish)
+                {
+                    breakCode = 1;
+                    break;
+                }
+            }
+
+            if(breakCode == 0)
+            {
+                Console.WriteLine("Daytime break required (48 hours after 5th shift)");
+                TimeSpan gap = shifts[5].StartTime - shifts[4].EndTime;
+                if (gap.TotalHours >= 48)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            if(breakCode == 1)
+            {
+                Console.WriteLine("Evening break required (48 hours after 4th shift)");
+                TimeSpan gap = shifts[4].StartTime - shifts[3].EndTime;
+                if (gap.TotalHours >= 48)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            if(breakCode == 2)
+            {
+                Console.WriteLine("Night break required (46 hours)");
+                TimeSpan gap = shifts[4].StartTime - shifts[3].EndTime;
+                if (gap.TotalHours >= 46)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                Console.WriteLine("Something went wrong");
+                return false;
+            }
+
         }
 
     }
