@@ -6,16 +6,34 @@ using System.Linq;
 namespace RotaChecker.Classes
 {
     public static class Compliance
+
     {
+        public static List<Shift> shiftsInRota = new List<Shift>();
         
         public static void CheckAll(Rota r)
         {
+            shiftsInRota = GetShifts(r.Duties);
+
             Console.WriteLine(Max48PerWeek(r));
             Console.WriteLine(Max72Per168(r));
             Console.WriteLine(Max13HourShift(r));
             Console.WriteLine(Max4LongShifts(r));
             Console.WriteLine(Max7ConsecutiveDays(r));
             Console.WriteLine(AtLeast11HoursRest(r));
+        }
+
+        public static List<Shift> GetShifts(List<WorkDuty> duties)
+        {
+            List<Shift> shiftsInRota = new List<Shift>();
+            foreach (WorkDuty d in duties)
+            {
+                if (d.GetType() == typeof(Shift))
+                {
+                    shiftsInRota.Add((Shift)d);
+                }
+            }
+
+            return shiftsInRota;
         }
 
         public static bool Max48PerWeek(Rota r)
@@ -26,7 +44,7 @@ namespace RotaChecker.Classes
 
             for (int i = r.WeekNumberStart; i <= r.WeekNumberEnd; i++)
             {
-                var thisWeekShifts = r.Shifts.Where(s => s.WeekNumber == i);
+                var thisWeekShifts = shiftsInRota.Where(s => s.WeekNumber == i);
                 double thisWeeklyHours = 0;
                 foreach (Shift s in thisWeekShifts)
                 {
@@ -53,6 +71,7 @@ namespace RotaChecker.Classes
 
         public static bool Max72Per168(Rota r)
         {
+
             Console.WriteLine("Checking max 72 hours per 168 hour period...");
 
             for (int i = 0; i < r.Length.Days; i++)
@@ -74,7 +93,7 @@ namespace RotaChecker.Classes
                 Console.WriteLine($"Checking {startDateTime} to {endDateTime}");
 
                 //Selects all the shifts with start or end time within window
-                var thisWeekShifts = r.Shifts.Where(y => (DateTime.Compare(startDateTime, y.StartTime) <= 0 && DateTime.Compare(endDateTime, y.StartTime) > 0) || (DateTime.Compare(startDateTime, y.EndTime) < 0 && DateTime.Compare(endDateTime, y.EndTime) >= 0));
+                var thisWeekShifts = shiftsInRota.Where(y => (DateTime.Compare(startDateTime, y.StartTime) <= 0 && DateTime.Compare(endDateTime, y.StartTime) > 0) || (DateTime.Compare(startDateTime, y.EndTime) < 0 && DateTime.Compare(endDateTime, y.EndTime) >= 0));
 
                 Console.WriteLine($"{thisWeekShifts.Count()} shifts found");
 
@@ -120,7 +139,7 @@ namespace RotaChecker.Classes
         {
             Console.WriteLine("Checking max 13 hours per shift...");
 
-            foreach (Shift s in r.Shifts)
+            foreach (Shift s in shiftsInRota)
             {
                 if (s.Length.TotalHours > 13)
                 {
@@ -137,16 +156,16 @@ namespace RotaChecker.Classes
             Console.WriteLine("Checking max 4 long shifts consecutively...");
 
             //Cycle through all shifts
-            for (int i = 0; i < r.Shifts.Count - 1; i++)
+            for (int i = 0; i < shiftsInRota.Count() - 1; i++)
             {
                 //If a long shift is found
-                if (r.Shifts[i].Long)
+                if (shiftsInRota[i].Long)
                 {
                     //If there are 4 more shifts after
-                    if (r.Shifts.Count >= i + 5)
+                    if (shiftsInRota.Count >= i + 5)
                     {
 
-                        List<Shift> setOfFive = r.Shifts.GetRange(i, 5);
+                        List<Shift> setOfFive = shiftsInRota.GetRange(i, 5);
 
                         //Check if consecutive
 
@@ -159,27 +178,27 @@ namespace RotaChecker.Classes
                             //5 in a row returns fail test
                             if(DateTime.Compare(day1.AddDays(4), day5) >= 0)
                             {
-                                if (r.Shifts[i].Long && r.Shifts[i + 1].Long && r.Shifts[i + 2].Long && r.Shifts[i + 3].Long && r.Shifts[i + 4].Long)
+                                if (shiftsInRota[i].Long && shiftsInRota[i + 1].Long && shiftsInRota[i + 2].Long && shiftsInRota[i + 3].Long && shiftsInRota[i + 4].Long)
                                 {
                                     return false;
                                 }
                             }
                             
                             //4 in a row will check whether breaks are adhered to
-                            if (r.Shifts[i].Long && r.Shifts[i + 1].Long && r.Shifts[i + 2].Long && r.Shifts[i + 3].Long)
+                            if (shiftsInRota[i].Long && shiftsInRota[i + 1].Long && shiftsInRota[i + 2].Long && shiftsInRota[i + 3].Long)
                             {
 
                                 //Check if break will be after 4th or 5th shift
 
-                                bool noEvenings = (!r.Shifts[i].EveningFinish && !r.Shifts[i + 1].EveningFinish && !r.Shifts[i + 2].EveningFinish && !r.Shifts[i + 3].EveningFinish);
-                                bool noNights = (!r.Shifts[i].Night && !r.Shifts[i + 1].Night && !r.Shifts[i + 2].Night && !r.Shifts[i + 3].Night);
+                                bool noEvenings = (!shiftsInRota[i].EveningFinish && !shiftsInRota[i + 1].EveningFinish && !shiftsInRota[i + 2].EveningFinish && !shiftsInRota[i + 3].EveningFinish);
+                                bool noNights = (!shiftsInRota[i].Night && !shiftsInRota[i + 1].Night && !shiftsInRota[i + 2].Night && !shiftsInRota[i + 3].Night);
 
                                 if (noEvenings && noNights)
                                 {
-                                    if (r.Shifts.Count >= i + 6)
+                                    if (shiftsInRota.Count >= i + 6)
                                     {
                                         //Can work another
-                                        List<Shift> setOfSix = r.Shifts.GetRange(i, 6);
+                                        List<Shift> setOfSix = shiftsInRota.GetRange(i, 6);
 
                                         //Check if 5th is consecutive
                                         DateTime day1b = new DateTime(setOfSix[0].StartTime.Year, setOfSix[0].StartTime.Month, setOfSix[0].StartTime.Day);
@@ -187,18 +206,18 @@ namespace RotaChecker.Classes
 
                                         if (DateTime.Compare(day1b.AddDays(4), day5b) >= 0)
                                         {
-                                            Console.WriteLine($"Break Required after {r.Shifts[i + 4].EndTime} - {CheckBreakRule(setOfSix)}");
+                                            Console.WriteLine($"Break Required after {shiftsInRota[i + 4].EndTime} - {CheckBreakRule(setOfSix)}");
                                         }
                                         else
                                         {
-                                            Console.WriteLine($"Break Required after {r.Shifts[i + 4].EndTime}");
+                                            Console.WriteLine($"Break Required after {shiftsInRota[i + 4].EndTime}");
                                         }
 
                                     }
                                 }
                                 else
                                 {
-                                    Console.WriteLine($"Break Required after {r.Shifts[i + 3].EndTime} - {CheckBreakRule(setOfFive)}");
+                                    Console.WriteLine($"Break Required after {shiftsInRota[i + 3].EndTime} - {CheckBreakRule(setOfFive)}");
                                 }
                             }
                         }
@@ -290,12 +309,12 @@ namespace RotaChecker.Classes
             Console.WriteLine("Checking max 7 days consecutively...");
 
             //Cycle through all shifts
-            for (int i = 0; i < r.Shifts.Count - 1; i++)
+            for (int i = 0; i < shiftsInRota.Count - 1; i++)
             {
                 //If there are 7 more shifts after
-                if (r.Shifts.Count >= i + 8)
+                if (shiftsInRota.Count >= i + 8)
                 {
-                    List<Shift> setOfEight = r.Shifts.GetRange(i, 8);
+                    List<Shift> setOfEight = shiftsInRota.GetRange(i, 8);
 
                     //Check if consecutive
 
@@ -305,7 +324,7 @@ namespace RotaChecker.Classes
 
                     if (DateTime.Compare(day1.AddDays(7), day8) >= 0)
                     {
-                        Console.WriteLine($"8 consecutive shifts after {r.Shifts[i].StartTime}");
+                        Console.WriteLine($"8 consecutive shifts after {shiftsInRota[i].StartTime}");
 
                         return false;
                         
@@ -313,9 +332,9 @@ namespace RotaChecker.Classes
 
                     if (DateTime.Compare(day1.AddDays(6), day7) >= 0)
                     {
-                        Console.WriteLine($"48 hours break required after {r.Shifts[i+6].EndTime}");
+                        Console.WriteLine($"48 hours break required after {shiftsInRota[i+6].EndTime}");
 
-                        TimeSpan gap = r.Shifts[i+7].StartTime - r.Shifts[i + 6].StartTime;
+                        TimeSpan gap = shiftsInRota[i+7].StartTime - shiftsInRota[i + 6].StartTime;
 
                         if(gap.TotalHours < 48)
                         {
@@ -340,13 +359,13 @@ namespace RotaChecker.Classes
             Console.WriteLine("Checking 11 hours rest between shifts...");
 
             //Cycle through all shifts up to the last
-            for (int i = 0; i < r.Shifts.Count - 2; i++)
+            for (int i = 0; i < shiftsInRota.Count - 2; i++)
             {
-                TimeSpan gap = r.Shifts[i + 1].StartTime - r.Shifts[i].EndTime;
+                TimeSpan gap = shiftsInRota[i + 1].StartTime - shiftsInRota[i].EndTime;
 
                 if(gap.TotalHours < 11)
                 {
-                    Console.WriteLine($"Less than 11 hours between {r.Shifts[i].EndTime} and {r.Shifts[i + 1].StartTime}");
+                    Console.WriteLine($"Less than 11 hours between {shiftsInRota[i].EndTime} and {shiftsInRota[i + 1].StartTime}");
                     return false;
                 }
                     

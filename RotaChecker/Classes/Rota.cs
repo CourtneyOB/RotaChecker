@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Globalization;
+using RotaChecker.Classes;
 
 namespace RotaChecker
 {
     public class Rota : CalendarBase
     {
-        public List<Shift> Shifts { get; set; }
+        public List<WorkDuty> Duties { get; set; }
         public DateTime RotaStartTime { get; set; }
         public DateTime RotaEndTime { get; set; }
         public TimeSpan Length { get; private set; }
@@ -19,14 +20,14 @@ namespace RotaChecker
 
         public Rota()
         {
-            Shifts = new List<Shift>();
+            Duties = new List<WorkDuty>();
 
         }        
 
         public List<string> Describe()
         {
             List<string> response = new List<string>();
-            foreach(Shift s in Shifts)
+            foreach(Shift s in Duties)
             {
                 response.Add($"The shift starts at {s.StartTime} and ends at {s.EndTime}.\nThe length of the shift is {s.Length.TotalHours} hours.");
                 response.Add($"Week number is {s.WeekNumber}");
@@ -54,9 +55,9 @@ namespace RotaChecker
 
         public void AddShift(Shift s)
         {
-            Shifts.Add(s);
-            RotaStartTime = Shifts.Select(s => s.StartTime).Min();
-            RotaEndTime = Shifts.Select(s => s.EndTime).Max();
+            Duties.Add(s);
+            RotaStartTime = Duties.Select(s => s.StartTime).Min();
+            RotaEndTime = Duties.Select(s => s.EndTime).Max();
             Length = RotaEndTime - RotaStartTime;
 
             WeekNumberStart = Calendar.GetWeekOfYear(RotaStartTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);

@@ -6,10 +6,14 @@ namespace RotaChecker.Classes
 {
     public class OnCallPeriod : WorkDuty
     {
-        public OnCallPeriod(DateTime start, DateTime end) : base(start, end)
+        public TimeSpan ExpectedHours { get; }
+
+        public OnCallPeriod(DateTime start, DateTime end, TimeSpan expectedHours) : base(start, end)
         {
+            ExpectedHours = expectedHours;
 
         }
 
     }
+
 }
