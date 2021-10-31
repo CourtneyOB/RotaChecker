@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RotaChecker.Classes;
+using System;
 using System.Collections.Generic;
 
 namespace RotaChecker
@@ -9,7 +10,7 @@ namespace RotaChecker
         {
 
             Rota rota = RotaBuilder.CreateRota();
-
+            
             //List<string> text = rota.Describe();
             //foreach(string s in text)
             //{
@@ -25,13 +26,8 @@ namespace RotaChecker
             //}
 
 
-            Console.WriteLine(rota.Max48PerWeek());
+            Compliance.CheckAll(rota);
 
-            Console.WriteLine(rota.Max72Per168());
-
-            Console.WriteLine(rota.Max13HourShift());
-
-            Console.WriteLine(rota.Max4LongShifts());
             //need to check night breaks (even after single night)
 
 
