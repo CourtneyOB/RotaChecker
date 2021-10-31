@@ -13,7 +13,7 @@ namespace RotaChecker
             rota.AddShift(new Shift(new DateTime(2021, 10, 10, 9, 0, 0), new DateTime(2021, 10, 10, 20, 0, 0)));
             rota.AddShift(new Shift(new DateTime(2021, 10, 11, 7, 30, 0), new DateTime(2021, 10, 11, 19, 0, 0)));
             rota.AddShift(new Shift(new DateTime(2021, 10, 12, 8, 0, 0), new DateTime(2021, 10, 12, 21, 0, 0)));
-            rota.AddShift(new Shift(new DateTime(2021, 10, 13, 9, 0, 0), new DateTime(2021, 10, 13, 20, 0, 0)));
+            rota.AddShift(new Shift(new DateTime(2021, 10, 13, 9, 0, 0), new DateTime(2021, 10, 13, 17, 0, 0)));
             rota.AddShift(new Shift(new DateTime(2021, 10, 14, 7, 0, 0), new DateTime(2021, 10, 14, 13, 0, 0)));
             rota.AddShift(new Shift(new DateTime(2021, 10, 16, 12, 0, 0), new DateTime(2021, 10, 16, 20, 0, 0)));
 
