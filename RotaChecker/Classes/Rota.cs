@@ -56,8 +56,19 @@ namespace RotaChecker
         public void AddShift(Shift s)
         {
             Duties.Add(s);
-            RotaStartTime = Duties.Select(s => s.StartTime).Min();
-            RotaEndTime = Duties.Select(s => s.EndTime).Max();
+            RotaStartTime = Duties.Select(d => d.StartTime).Min();
+            RotaEndTime = Duties.Select(d => d.EndTime).Max();
+            Length = RotaEndTime - RotaStartTime;
+
+            WeekNumberStart = Calendar.GetWeekOfYear(RotaStartTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
+            WeekNumberEnd = Calendar.GetWeekOfYear(RotaEndTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
+        }
+
+        public void AddOnCall(OnCallPeriod o)
+        {
+            Duties.Add(o);
+            RotaStartTime = Duties.Select(d => d.StartTime).Min();
+            RotaEndTime = Duties.Select(d => d.EndTime).Max();
             Length = RotaEndTime - RotaStartTime;
 
             WeekNumberStart = Calendar.GetWeekOfYear(RotaStartTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
