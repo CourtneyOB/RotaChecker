@@ -1,36 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Globalization;
+using RotaChecker.Classes;
 
 namespace RotaChecker
 {
-    public class Shift : CalendarBase
+    public class Shift : WorkDuty
     {
-        public DateTime StartTime { get; }
-        public DateTime EndTime { get; }
-        public TimeSpan Length { get; }
-        public bool Weekend { get; }
+
         public bool Night { get; }
         public bool Long { get;  }
         public bool EveningFinish { get; }
-        public int WeekNumber { get; }
 
-        public Shift(DateTime start, DateTime end)
+
+        public Shift(DateTime start, DateTime end) : base(start, end)
         {
-            StartTime = start;
-            EndTime = end;
-            Length = EndTime - StartTime;
-
-            if(start.DayOfWeek == DayOfWeek.Saturday || start.DayOfWeek == DayOfWeek.Sunday)
-            {
-                Weekend = true;
-            }
-            else
-            {
-                Weekend = false;
-            }
-
+           //this definition of nights is wrong and needs changing
             if(start.Hour < 6 || start.Hour >= 23)
             {
                 Night = true;
@@ -58,8 +43,6 @@ namespace RotaChecker
                 EveningFinish = false;
             }
 
-            //assign week number
-            WeekNumber = Calendar.GetWeekOfYear(StartTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
 
         }
 
