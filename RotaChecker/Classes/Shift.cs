@@ -15,7 +15,7 @@ namespace RotaChecker
 
         public Shift(DateTime start, DateTime end) : base(start, end)
         {
-           
+           //this definition of nights is wrong and needs changing
             if(start.Hour < 6 || start.Hour >= 23)
             {
                 Night = true;
