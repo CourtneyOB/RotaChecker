@@ -109,6 +109,11 @@ namespace RotaChecker
                 throw new ArgumentException("Start time must be before end time");
             }
 
+            if(o.ExpectedHours.TotalHours <= 0)
+            {
+                throw new ArgumentException("Expected hours must be more than 0");
+            }
+
             List<OnCallPeriod> onCallsInRota = GetOnCalls();
 
             foreach (OnCallPeriod onCall in onCallsInRota)
