@@ -18,7 +18,19 @@ namespace RotaChecker
 
             Night = CheckNight(start, end);
 
-            if(Length.TotalHours > 10)
+            if (!Night)
+            {
+                if (EndTime.Hour >= 23 || EndTime.Hour < 2)
+                {
+                    EveningFinish = true;
+                }
+            }
+            else
+            {
+                EveningFinish = false;
+            }
+
+            if (Length.TotalHours > 10)
             {
                 Long = true;
             }
@@ -26,16 +38,6 @@ namespace RotaChecker
             {
                 Long = false;
             }
-
-            if(EndTime.Hour >= 23 || EndTime.Hour < 2)
-            {
-                EveningFinish = true;
-            }
-            else
-            {
-                EveningFinish = false;
-            }
-
 
         }
 

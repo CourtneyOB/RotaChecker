@@ -15,8 +15,8 @@ namespace RotaChecker.Classes
         public static void CheckAll(Rota r)
         {
             Rota = r;
-            ShiftsInRota = GetShifts(Rota.Duties);
-            OnCallInRota = GetOnCalls(Rota.Duties);
+            ShiftsInRota = Rota.GetShifts();
+            OnCallInRota = Rota.GetOnCalls();
 
             //Change it to check to the end for each test rather than return false and stop
 
@@ -33,34 +33,6 @@ namespace RotaChecker.Classes
             Console.WriteLine(NoMoreThan3OnCallsIn7Days());
             Console.WriteLine(DayAfterOnCallMustNotHaveWorkLongerThan10Hours());
             Console.WriteLine(EightHoursRestPer24HourOnCall());
-        }
-
-        public static List<Shift> GetShifts(List<WorkDuty> duties)
-        {
-            List<Shift> shiftsInRota = new List<Shift>();
-            foreach (WorkDuty d in duties)
-            {
-                if (d.GetType() == typeof(Shift))
-                {
-                    shiftsInRota.Add((Shift)d);
-                }
-            }
-
-            return shiftsInRota;
-        }
-
-        public static List<OnCallPeriod> GetOnCalls(List<WorkDuty> duties)
-        {
-            List<OnCallPeriod> onCallInRota = new List<OnCallPeriod>();
-            foreach (WorkDuty d in duties)
-            {
-                if (d.GetType() == typeof(OnCallPeriod))
-                {
-                    onCallInRota.Add((OnCallPeriod)d);
-                }
-            }
-
-            return onCallInRota;
         }
 
         //These only work through CheckAll function

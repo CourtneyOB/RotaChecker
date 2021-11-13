@@ -72,20 +72,58 @@ namespace RotaChecker
 
         public void AddShift(Shift s)
         {
-            //Need validation for this - make sure shifts not overlapping, that end time is after start time etc.
 
-            Duties.Add(s);
-            RotaStartTime = Duties.Select(d => d.StartTime).Min();
-            RotaEndTime = Duties.Select(d => d.EndTime).Max();
-            Length = RotaEndTime - RotaStartTime;
+            if(DateTime.Compare(s.StartTime, s.EndTime) >= 0)
+            {
+                throw new ArgumentException("Start time must be before end time");
+            }
+            
+            List<Shift> shiftsInRota = GetShifts();
 
+            foreach(Shift shift in shiftsInRota)
+            {
+                if(shift.StartTime <= s.StartTime && s.StartTime < shift.EndTime)
+                {
+                    throw new ArgumentException("New shift overlaps with existing shift");
+                }
+                else if(shift.EndTime >= s.EndTime && s.EndTime > shift.StartTime)
+                {
+                    throw new ArgumentException("New shift overlaps with existing shift");
+                }
+            }
+                
+            Duties.Add(s);   
+            RotaStartTime = Duties.Select(d => d.StartTime).Min(); 
+            RotaEndTime = Duties.Select(d => d.EndTime).Max(); 
+            Length = RotaEndTime - RotaStartTime; 
             WeekNumberStart = Calendar.GetWeekOfYear(RotaStartTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
             WeekNumberEnd = Calendar.GetWeekOfYear(RotaEndTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
+
         }
 
         public void AddOnCall(OnCallPeriod o)
         {
-            //Need validation for this - make sure shifts not overlapping, that end time is after start time etc.
+
+            if (DateTime.Compare(o.StartTime, o.EndTime) >= 0)
+            {
+                throw new ArgumentException("Start time must be before end time");
+            }
+
+            List<OnCallPeriod> onCallsInRota = GetOnCalls();
+
+            foreach (OnCallPeriod onCall in onCallsInRota)
+            {
+                if (onCall.StartTime <= o.StartTime && o.StartTime < onCall.EndTime)
+                {
+                    throw new ArgumentException("New on call overlaps with existing on call");
+                }
+                else if (onCall.EndTime >= o.EndTime && o.EndTime > onCall.StartTime)
+                {
+                    throw new ArgumentException("New on call overlaps with existing on call");
+                }
+            }
+
+
             Duties.Add(o);
             RotaStartTime = Duties.Select(d => d.StartTime).Min();
             RotaEndTime = Duties.Select(d => d.EndTime).Max();
@@ -95,7 +133,35 @@ namespace RotaChecker
             WeekNumberEnd = Calendar.GetWeekOfYear(RotaEndTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
         }
 
-        
+        public List<Shift> GetShifts()
+        {
+
+            List<Shift> shiftsInRota = new List<Shift>();
+            foreach (WorkDuty d in Duties)
+            {
+                if (d.GetType() == typeof(Shift))
+                {
+                    shiftsInRota.Add((Shift)d);
+                }
+            }
+
+            return shiftsInRota;
+        }
+
+        public List<OnCallPeriod> GetOnCalls()
+        {
+            List<OnCallPeriod> onCallInRota = new List<OnCallPeriod>();
+            foreach (WorkDuty d in Duties)
+            {
+                if (d.GetType() == typeof(OnCallPeriod))
+                {
+                    onCallInRota.Add((OnCallPeriod)d);
+                }
+            }
+
+            return onCallInRota;
+        }
+
 
     }
 }
