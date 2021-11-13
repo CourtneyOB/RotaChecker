@@ -15,6 +15,12 @@ namespace RotaChecker.Classes
         public static void CheckAll(Rota r)
         {
             Rota = r;
+
+            if(Rota.Length.TotalDays > 182)
+            {
+                throw new ArgumentException($"Rota cannot be longer than 26 weeks (rota length is {Rota.Length.TotalDays / 7} weeks)");
+            }
+
             ShiftsInRota = Rota.GetShifts();
             OnCallInRota = Rota.GetOnCalls();
 
