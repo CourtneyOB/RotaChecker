@@ -155,16 +155,10 @@ namespace RotaChecker
 
         public List<OnCallPeriod> GetOnCalls()
         {
-            List<OnCallPeriod> onCallInRota = new List<OnCallPeriod>();
-            foreach (WorkDuty d in Duties)
-            {
-                if (d.GetType() == typeof(OnCallPeriod))
-                {
-                    onCallInRota.Add((OnCallPeriod)d);
-                }
-            }
+            List<OnCallPeriod> onCallInRota = Duties.OfType<OnCallPeriod>().ToList();
 
             return onCallInRota;
+
         }
 
 
