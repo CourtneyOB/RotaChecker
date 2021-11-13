@@ -27,27 +27,44 @@ namespace RotaChecker
         public List<string> Describe()
         {
             List<string> response = new List<string>();
-            foreach(Shift s in Duties)
+            foreach (WorkDuty d in Duties)
             {
-                response.Add($"The shift starts at {s.StartTime} and ends at {s.EndTime}.\nThe length of the shift is {s.Length.TotalHours} hours.");
-                response.Add($"Week number is {s.WeekNumber}");
+                if (d is Shift s)
+                {
+                    response.Add($"The shift starts at {s.StartTime} and ends at {s.EndTime}.\nThe length of the shift is {s.Length.TotalHours} hours.");
+                    response.Add($"Week number is {s.WeekNumber}");
 
-                if (s.Weekend)
-                {
-                   response.Add($"It is a weekend shift");
-                }
-                else
-                {
-                    response.Add($"It is not a weekend shift");
+                    if (s.Weekend)
+                    {
+                        response.Add($"It is a weekend shift");
+                    }
+                    else
+                    {
+                        response.Add($"It is not a weekend shift");
+                    }
+
+                    if (s.Night)
+                    {
+                        response.Add($"It is a night shift");
+                    }
+                    else
+                    {
+                        response.Add($"It is not a night shift");
+                    }
                 }
 
-                if (s.Night)
+                else if (d is OnCallPeriod o)
                 {
-                    response.Add($"It is a night shift");
-                }
-                else
-                {
-                    response.Add($"It is not a night shift");
+                    response.Add($"The on call starts at {o.StartTime} and ends at {o.EndTime}.\nThe expected work hours of the period are {o.ExpectedHours.TotalHours} hours.");
+                    response.Add($"Week number is {o.WeekNumber}");
+                    if (o.Weekend)
+                    {
+                        response.Add($"It is a weekend on call");
+                    }
+                    else
+                    {
+                        response.Add($"It is not a weekend on call");
+                    }
                 }
             }
             return response;
@@ -55,6 +72,8 @@ namespace RotaChecker
 
         public void AddShift(Shift s)
         {
+            //Need validation for this - make sure shifts not overlapping, that end time is after start time etc.
+
             Duties.Add(s);
             RotaStartTime = Duties.Select(d => d.StartTime).Min();
             RotaEndTime = Duties.Select(d => d.EndTime).Max();
@@ -66,6 +85,7 @@ namespace RotaChecker
 
         public void AddOnCall(OnCallPeriod o)
         {
+            //Need validation for this - make sure shifts not overlapping, that end time is after start time etc.
             Duties.Add(o);
             RotaStartTime = Duties.Select(d => d.StartTime).Min();
             RotaEndTime = Duties.Select(d => d.EndTime).Max();

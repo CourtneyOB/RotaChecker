@@ -8,7 +8,7 @@ namespace RotaChecker
     {
         static internal Rota CreateRota()
         {
-            //Need validation for this - make sure shifts not overlapping, that end time is after start time etc.
+
             Rota rota = new Rota();
 
             rota.AddShift(new Shift(new DateTime(2021, 11, 1, 9, 0, 0), new DateTime(2021, 11, 1, 17, 0, 0)));
@@ -43,6 +43,7 @@ namespace RotaChecker
             rota.AddOnCall(new OnCallPeriod(new DateTime(2021, 12, 1, 16, 0, 0), new DateTime(2021, 12, 2, 9, 0, 0), new TimeSpan(4, 30, 0)));
             rota.AddShift(new Shift(new DateTime(2021, 12, 2, 9, 0, 0), new DateTime(2021, 12, 2, 17, 0, 0)));
             rota.AddShift(new Shift(new DateTime(2021, 12, 3, 9, 0, 0), new DateTime(2021, 12, 3, 17, 0, 0)));
+
 
             return rota;
 
