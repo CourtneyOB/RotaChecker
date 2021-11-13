@@ -23,7 +23,7 @@ namespace RotaChecker
             //Console.WriteLine($"The rota starts at {rota.RotaStartTime} and ends at {rota.RotaEndTime}. The length is {rota.Length.TotalDays} days");
 
 
-            //Compliance.CheckAll(rota);
+            Compliance.CheckAll(rota);
 
 
         }

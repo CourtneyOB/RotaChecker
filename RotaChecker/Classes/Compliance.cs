@@ -35,8 +35,6 @@ namespace RotaChecker.Classes
             Console.WriteLine(EightHoursRestPer24HourOnCall());
         }
 
-        //These only work through CheckAll function
-
         private static bool Max48PerWeek()
         {
             Console.WriteLine("Checking max average 48 hours per week...");
