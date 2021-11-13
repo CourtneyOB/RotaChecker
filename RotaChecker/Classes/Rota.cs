@@ -140,25 +140,14 @@ namespace RotaChecker
 
         public List<Shift> GetShifts()
         {
-
-            List<Shift> shiftsInRota = new List<Shift>();
-            foreach (WorkDuty d in Duties)
-            {
-                if (d.GetType() == typeof(Shift))
-                {
-                    shiftsInRota.Add((Shift)d);
-                }
-            }
-
+            List<Shift> shiftsInRota = Duties.OfType<Shift>().ToList();
             return shiftsInRota;
         }
 
         public List<OnCallPeriod> GetOnCalls()
         {
             List<OnCallPeriod> onCallInRota = Duties.OfType<OnCallPeriod>().ToList();
-
             return onCallInRota;
-
         }
 
 
