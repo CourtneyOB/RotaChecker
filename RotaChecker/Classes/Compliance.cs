@@ -11,12 +11,14 @@ namespace RotaChecker.Classes
         private static List<Shift> ShiftsInRota = new List<Shift>();
         private static List<OnCallPeriod> OnCallInRota = new List<OnCallPeriod>();
         private static Rota Rota;
-        
+
         public static void CheckAll(Rota r)
         {
             Rota = r;
-            ShiftsInRota = GetShifts(Rota.Duties);
-            OnCallInRota = GetOnCalls(Rota.Duties);
+            ShiftsInRota = Rota.GetShifts();
+            OnCallInRota = Rota.GetOnCalls();
+
+            //Change it to check to the end for each test rather than return false and stop
 
             Console.WriteLine(Max48PerWeek());
             Console.WriteLine(Max72Per168());
@@ -27,34 +29,10 @@ namespace RotaChecker.Classes
             Console.WriteLine(NightRestBreaks());
             Console.WriteLine(WeekendFrequency());
             Console.WriteLine(Max24HourOnCall());
-        }
-
-        public static List<Shift> GetShifts(List<WorkDuty> duties)
-        {
-            List<Shift> shiftsInRota = new List<Shift>();
-            foreach (WorkDuty d in duties)
-            {
-                if (d.GetType() == typeof(Shift))
-                {
-                    shiftsInRota.Add((Shift)d);
-                }
-            }
-
-            return shiftsInRota;
-        }
-
-        public static List<OnCallPeriod> GetOnCalls(List<WorkDuty> duties)
-        {
-            List<OnCallPeriod> onCallInRota = new List<OnCallPeriod>();
-            foreach (WorkDuty d in duties)
-            {
-                if (d.GetType() == typeof(OnCallPeriod))
-                {
-                    onCallInRota.Add((OnCallPeriod)d);
-                }
-            }
-
-            return onCallInRota;
+            Console.WriteLine(NoConsecutiveOnCallPeriods());
+            Console.WriteLine(NoMoreThan3OnCallsIn7Days());
+            Console.WriteLine(DayAfterOnCallMustNotHaveWorkLongerThan10Hours());
+            Console.WriteLine(EightHoursRestPer24HourOnCall());
         }
 
         //These only work through CheckAll function
@@ -68,10 +46,15 @@ namespace RotaChecker.Classes
             for (int i = Rota.WeekNumberStart; i <= Rota.WeekNumberEnd; i++)
             {
                 var thisWeekShifts = ShiftsInRota.Where(s => s.WeekNumber == i);
+                var thisWeekOnCall = OnCallInRota.Where(o => o.WeekNumber == i);
                 double thisWeeklyHours = 0;
                 foreach (Shift s in thisWeekShifts)
                 {
                     thisWeeklyHours += s.Length.TotalHours;
+                }
+                foreach (OnCallPeriod o in thisWeekOnCall)
+                {
+                    thisWeeklyHours += o.ExpectedHours.TotalHours;
                 }
 
                 Console.WriteLine($"Week {i} contains {thisWeeklyHours} hours");
@@ -115,10 +98,11 @@ namespace RotaChecker.Classes
                 double thisWeeklyHours = 0;
                 Console.WriteLine($"Checking {startDateTime} to {endDateTime}");
 
-                //Selects all the shifts with start or end time within window
+                //Selects all the shifts/on calls with start or end time within window
                 var thisWeekShifts = ShiftsInRota.Where(y => (DateTime.Compare(startDateTime, y.StartTime) <= 0 && DateTime.Compare(endDateTime, y.StartTime) > 0) || (DateTime.Compare(startDateTime, y.EndTime) < 0 && DateTime.Compare(endDateTime, y.EndTime) >= 0));
-
+                var thisWeekOnCalls = OnCallInRota.Where(y => (DateTime.Compare(startDateTime, y.StartTime) <= 0 && DateTime.Compare(endDateTime, y.StartTime) > 0) || (DateTime.Compare(startDateTime, y.EndTime) < 0 && DateTime.Compare(endDateTime, y.EndTime) >= 0));
                 Console.WriteLine($"{thisWeekShifts.Count()} shifts found");
+                Console.WriteLine($"{thisWeekOnCalls.Count()} on calls found");
 
                 foreach (Shift s in thisWeekShifts)
                 {
@@ -139,6 +123,47 @@ namespace RotaChecker.Classes
                         //starts before end but finishes after
                         TimeSpan partialShift = endDateTime - s.StartTime;
                         thisWeeklyHours += partialShift.TotalHours;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Something went wrong");
+                    }
+                }
+
+                foreach (OnCallPeriod o in thisWeekOnCalls)
+                {
+                    //check whether it is fully in the time period
+                    if (DateTime.Compare(startDateTime, o.StartTime) <= 0 && DateTime.Compare(endDateTime, o.EndTime) >= 0)
+                    {
+                        thisWeeklyHours += o.ExpectedHours.TotalHours;
+                    }
+                    else if (DateTime.Compare(startDateTime, o.StartTime) > 0 && DateTime.Compare(endDateTime, o.EndTime) >= 0)
+                    {
+
+                        //starts before start but finishes after
+                        TimeSpan partialOnCall = o.EndTime - startDateTime;
+
+                        //find the proportion of the on call within the specified time period
+                        double proportion = partialOnCall.TotalHours / o.Length.TotalHours;
+
+                        //apply that proportion to the expected work hours
+                        TimeSpan partialHours = o.ExpectedHours * proportion;
+                        thisWeeklyHours += partialHours.TotalHours;
+
+                    }
+                    else if (DateTime.Compare(startDateTime, o.StartTime) <= 0 && DateTime.Compare(endDateTime, o.EndTime) < 0)
+                    {
+                        //starts before end but finishes after
+                        TimeSpan partialOnCall = endDateTime - o.StartTime;
+
+
+                        //find the proportion of the on call within the specified time period
+                        double proportion = partialOnCall.TotalHours / o.Length.TotalHours;
+
+                        //apply that proportion to the expected work hours
+                        TimeSpan partialHours = o.ExpectedHours * proportion;
+                        thisWeeklyHours += partialHours.TotalHours;
+
                     }
                     else
                     {
@@ -199,14 +224,14 @@ namespace RotaChecker.Classes
                         if (DateTime.Compare(day1.AddDays(3), day4) >= 0)
                         {
                             //5 in a row returns fail test
-                            if(DateTime.Compare(day1.AddDays(4), day5) >= 0)
+                            if (DateTime.Compare(day1.AddDays(4), day5) >= 0)
                             {
                                 if (ShiftsInRota[i].Long && ShiftsInRota[i + 1].Long && ShiftsInRota[i + 2].Long && ShiftsInRota[i + 3].Long && ShiftsInRota[i + 4].Long)
                                 {
                                     return false;
                                 }
                             }
-                            
+
                             //4 in a row will check whether breaks are adhered to
                             if (ShiftsInRota[i].Long && ShiftsInRota[i + 1].Long && ShiftsInRota[i + 2].Long && ShiftsInRota[i + 3].Long)
                             {
@@ -327,6 +352,7 @@ namespace RotaChecker.Classes
         private static bool Max7ConsecutiveDays()
         {
             //For shift in the rota
+            //LOW INTENSITY ON CALL?
             //Check if the next 8 days are worked
 
             Console.WriteLine("Checking max 7 days consecutively...");
@@ -350,16 +376,16 @@ namespace RotaChecker.Classes
                         Console.WriteLine($"8 consecutive shifts after {ShiftsInRota[i].StartTime}");
 
                         return false;
-                        
+
                     }
 
                     if (DateTime.Compare(day1.AddDays(6), day7) >= 0)
                     {
-                        Console.WriteLine($"48 hours break required after {ShiftsInRota[i+6].EndTime}");
+                        Console.WriteLine($"48 hours break required after {ShiftsInRota[i + 6].EndTime}");
 
-                        TimeSpan gap = ShiftsInRota[i+7].StartTime - ShiftsInRota[i + 6].StartTime;
+                        TimeSpan gap = ShiftsInRota[i + 7].StartTime - ShiftsInRota[i + 6].StartTime;
 
-                        if(gap.TotalHours < 48)
+                        if (gap.TotalHours < 48)
                         {
                             return false;
                         }
@@ -386,12 +412,12 @@ namespace RotaChecker.Classes
             {
                 TimeSpan gap = ShiftsInRota[i + 1].StartTime - ShiftsInRota[i].EndTime;
 
-                if(gap.TotalHours < 11)
+                if (gap.TotalHours < 11)
                 {
                     Console.WriteLine($"Less than 11 hours between {ShiftsInRota[i].EndTime} and {ShiftsInRota[i + 1].StartTime}");
                     return false;
                 }
-                    
+
             }
             return true;
         }
@@ -399,8 +425,8 @@ namespace RotaChecker.Classes
         private static bool NightRestBreaks()
         {
             Console.WriteLine("Checking every set of night shifts has a 46 hour break...");
-            
-            for(int i = 0; i < ShiftsInRota.Count - 1; i++)
+
+            for (int i = 0; i < ShiftsInRota.Count - 1; i++)
             {
                 if (ShiftsInRota[i].Night)
                 {
@@ -424,7 +450,7 @@ namespace RotaChecker.Classes
         private static bool WeekendFrequency()
         {
             Console.WriteLine("Checking no more than 1 in 2 weekends...");
-            
+
             List<int> weekendWork = new List<int>();
 
             for (int i = Rota.WeekNumberStart; i <= Rota.WeekNumberEnd; i++)
@@ -437,10 +463,10 @@ namespace RotaChecker.Classes
                 else
                 {
                     weekendWork.Add(0);
-                }                
+                }
             }
 
-            if(weekendWork.Average() > 0.5)
+            if (weekendWork.Average() > 0.5)
             {
                 Console.WriteLine("More than 1 in 2 weekends worked");
                 return false;
@@ -467,13 +493,126 @@ namespace RotaChecker.Classes
             return true;
         }
 
-        //No consecutive on-call periods other than Saturday and Sunday. No more than 3 on-call periods in 7 consecutive days
+        private static bool NoConsecutiveOnCallPeriods()
+        {
+            Console.WriteLine("Checking no consecutive on call periods (except for Saturday/Sunday)...");
 
-        //Day after an on-call period must not have work rostered longer 10 hours
-        //Where Saturday and Sunday on-calls are worked consecutively, this rule applies to the day after the Sunday on-call
+            //Cycle through all on calls
+            for (int i = 0; i < OnCallInRota.Count() - 1; i++)
+            {
+                if (OnCallInRota[i].StartTime.Date.AddDays(1) == OnCallInRota[i + 1].StartTime.Date)
+                {
+                    if (OnCallInRota[i].StartTime.DayOfWeek != DayOfWeek.Saturday)
+                    {
+                        //this would mean it is not a saturday and sunday
+                        Console.WriteLine($"{OnCallInRota[i].StartTime.Date} and {OnCallInRota[i + 1].StartTime.Date} are consecutive");
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
 
-        //Expected rest of 8 hours per 24 hour on-call period, 5 hours must be continuous between 22:00-07:00
+        private static bool NoMoreThan3OnCallsIn7Days()
+        {
+            Console.WriteLine("Checking no more than 3 on call periods in 7 days...");
 
+            for (int i = 0; i < Rota.Length.Days; i++)
+            {
+                //Get midnight on the first day to be checked
+                DateTime setMidnight = new DateTime(Rota.RotaStartTime.Year, Rota.RotaStartTime.Month, Rota.RotaStartTime.Day);
+
+                //Select the next date to be cycled through and add 7 days
+                DateTime startDateTime = setMidnight.AddDays(i);
+                DateTime endDateTime = startDateTime.AddDays(7);
+
+                //If there are less than 7 days remaining, then there is no need to check further
+                if (DateTime.Compare(Rota.RotaEndTime.AddDays(1), endDateTime) < 0)
+                {
+                    break;
+                }
+
+                Console.WriteLine($"Checking {startDateTime} to {endDateTime}");
+
+                //Selects all the on calls with start or end time within window
+                var thisWeekOnCalls = OnCallInRota.Where(y => (DateTime.Compare(startDateTime, y.StartTime) <= 0 && DateTime.Compare(endDateTime, y.StartTime) > 0) || (DateTime.Compare(startDateTime, y.EndTime) < 0 && DateTime.Compare(endDateTime, y.EndTime) >= 0));
+                Console.WriteLine($"{thisWeekOnCalls.Count()} on calls found");
+
+                if (thisWeekOnCalls.Count() > 3)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static bool DayAfterOnCallMustNotHaveWorkLongerThan10Hours()
+        {
+            Console.WriteLine("Checking days after on call have no longer than 10 hours work...");
+
+            //Cycle through all on calls
+            for (int i = 0; i < OnCallInRota.Count(); i++)
+            {
+                if (i < OnCallInRota.Count() - 1)
+                {
+                    if (OnCallInRota[i].StartTime.Date.AddDays(1) == OnCallInRota[i + 1].StartTime.Date)
+                    {
+                        if (OnCallInRota[i].StartTime.DayOfWeek == DayOfWeek.Saturday)
+                        {
+                            continue;
+                        }
+                    }
+                }
+
+                //find if there is a shift or on call the next day
+                var nextDayWork = Rota.Duties.FirstOrDefault(d => d.StartTime.Date == OnCallInRota[i].StartTime.Date.AddDays(1));
+
+                if (nextDayWork != null)
+                {
+                    if (nextDayWork is Shift s)
+                    {
+                        if (s.Length.TotalHours > 10)
+                        {
+                            Console.WriteLine($"More than 10 hours work, day after {OnCallInRota[i].StartTime.Date}");
+                            return false;
+                        }
+                    }
+                    if (nextDayWork is OnCallPeriod o)
+                    {
+                        if (o.ExpectedHours.TotalHours > 10)
+                        {
+                            Console.WriteLine($"More than 10 hours work, day after {OnCallInRota[i].StartTime.Date}");
+                            return false;
+                        }
+                    }
+                }
+
+            }
+
+
+            return true;
+        }
+
+        private static bool EightHoursRestPer24HourOnCall()
+        {
+            Console.WriteLine("Checking on call periods have at least 8 hours rest...");
+
+            //Cycle through all on calls
+            for (int i = 0; i < OnCallInRota.Count(); i++)
+            {
+                if(OnCallInRota[i].Length.TotalHours == 24)
+                {
+                    if(OnCallInRota[i].ExpectedHours.TotalHours > 16)
+                    {
+                        Console.WriteLine($"Less than 8 hours rest expected during {OnCallInRota[i].StartTime} on call shift");
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
 
 
     }

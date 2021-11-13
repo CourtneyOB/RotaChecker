@@ -15,17 +15,22 @@ namespace RotaChecker
 
         public Shift(DateTime start, DateTime end) : base(start, end)
         {
-           //this definition of nights is wrong and needs changing
-            if(start.Hour < 6 || start.Hour >= 23)
+
+            Night = CheckNight(start, end);
+
+            if (!Night)
             {
-                Night = true;
+                if (EndTime.Hour >= 23 || EndTime.Hour < 2)
+                {
+                    EveningFinish = true;
+                }
             }
             else
             {
-                Night = false;
+                EveningFinish = false;
             }
 
-            if(Length.TotalHours > 10)
+            if (Length.TotalHours > 10)
             {
                 Long = true;
             }
@@ -34,16 +39,83 @@ namespace RotaChecker
                 Long = false;
             }
 
-            if(EndTime.Hour >= 23 || EndTime.Hour < 2)
+        }
+
+        private bool CheckNight(DateTime start, DateTime end)
+        {
+            if (start.Hour >= 23)
             {
-                EveningFinish = true;
+                DateTime nextDay6Am = start.Date.AddDays(1) + new TimeSpan(6, 0, 0);
+
+                if (DateTime.Compare(nextDay6Am, end) <= 0)
+                {
+                    TimeSpan ts = nextDay6Am - start;
+                    if (ts.TotalHours >= 3)
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    TimeSpan ts = end - start;
+                    if (ts.TotalHours >= 3)
+                    {
+                        return true;
+                    }
+                }
+
+            }
+            else if (start.Hour < 6)
+            {
+                DateTime sameDay6Am = start.Date + new TimeSpan(6, 0, 0);
+
+                if (DateTime.Compare(sameDay6Am, end) <= 0)
+                {
+                    TimeSpan ts = sameDay6Am - start;
+                    if (ts.TotalHours >= 3)
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    TimeSpan ts = end - start;
+                    if (ts.TotalHours >= 3)
+                    {
+                        return true;
+                    }
+                }
+            }
+            else if (end.Hour < 6)
+            {
+                DateTime prevDay11Pm = end.Date.AddDays(-1) + new TimeSpan(23, 0, 0);
+
+                if (DateTime.Compare(prevDay11Pm, start) >= 0)
+                {
+                    TimeSpan ts = end - prevDay11Pm;
+                    if (ts.TotalHours >= 3)
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    TimeSpan ts = end - start;
+                    if (ts.TotalHours >= 3)
+                    {
+                        return true;
+                    }
+                }
             }
             else
             {
-                EveningFinish = false;
+                if (start.Date.AddDays(1) == end.Date)
+                {
+                    return true;
+                }
             }
 
-
+            return false;
         }
 
     }

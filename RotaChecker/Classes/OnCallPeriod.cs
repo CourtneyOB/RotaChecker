@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace RotaChecker.Classes
+namespace RotaChecker
 {
     public class OnCallPeriod : WorkDuty
     {
