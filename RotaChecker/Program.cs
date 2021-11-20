@@ -11,14 +11,14 @@ namespace RotaChecker
 
             Rota rota = RotaBuilder.CreateRota();
 
-/*          List<string> text = rota.Describe();
+            List<string> text = rota.Describe();
             foreach(string s in text)
             {
                Console.WriteLine(s);
             }
-*/
 
-            Compliance.CheckAll(rota);
+
+          //  Compliance.CheckAll(rota);
 
 
         }

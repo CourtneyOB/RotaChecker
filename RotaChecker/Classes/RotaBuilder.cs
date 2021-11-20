@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RotaChecker.Classes;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -10,8 +11,17 @@ namespace RotaChecker
         {
 
             Rota rota = new Rota();
+            ShiftTemplate normalWorkingDay = new ShiftTemplate(rota, "Normal Working Day", 8.0);
 
-            rota.AddShift(new Shift(new DateTime(2021, 11, 1, 9, 0, 0), new DateTime(2021, 11, 1, 17, 0, 0)));
+            normalWorkingDay.CreateShift(new DateTime(2021, 11, 4, 9, 0, 0));
+            normalWorkingDay.CreateShift(new DateTime(2021, 11, 5, 9, 0, 0));
+            normalWorkingDay.CreateShift(new DateTime(2021, 11, 6, 9, 0, 0));
+            normalWorkingDay.CreateShift(new DateTime(2021, 11, 7, 9, 0, 0));
+            normalWorkingDay.CreateShift(new DateTime(2021, 11, 8, 23, 0, 0));
+
+
+
+/*          rota.AddShift(new Shift(new DateTime(2021, 11, 1, 9, 0, 0), new DateTime(2021, 11, 1, 17, 0, 0)));
             rota.AddShift(new Shift(new DateTime(2021, 11, 2, 9, 0, 0), new DateTime(2021, 11, 2, 17, 0, 0)));
             rota.AddShift(new Shift(new DateTime(2021, 11, 3, 9, 0, 0), new DateTime(2021, 11, 3, 17, 0, 0)));
             rota.AddShift(new Shift(new DateTime(2021, 11, 4, 9, 0, 0), new DateTime(2021, 11, 4, 17, 0, 0)));
@@ -42,7 +52,7 @@ namespace RotaChecker
             rota.AddShift(new Shift(new DateTime(2021, 12, 1, 9, 0, 0), new DateTime(2021, 12, 1, 17, 0, 0)));
             rota.AddOnCall(new OnCallPeriod(new DateTime(2021, 12, 1, 16, 0, 0), new DateTime(2021, 12, 2, 9, 0, 0), new TimeSpan(4, 30, 0)));
             rota.AddShift(new Shift(new DateTime(2021, 12, 2, 9, 0, 0), new DateTime(2021, 12, 2, 17, 0, 0)));
-            rota.AddShift(new Shift(new DateTime(2021, 12, 3, 9, 0, 0), new DateTime(2021, 12, 3, 17, 0, 0)));
+            rota.AddShift(new Shift(new DateTime(2021, 12, 3, 9, 0, 0), new DateTime(2021, 12, 3, 17, 0, 0)));*/
 
 
             return rota;
