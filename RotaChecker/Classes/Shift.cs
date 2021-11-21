@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using RotaChecker.Classes;
 
-namespace RotaChecker
+namespace RotaChecker.Classes
 {
     public class Shift : WorkDuty
     {

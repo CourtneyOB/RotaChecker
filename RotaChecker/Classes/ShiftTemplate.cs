@@ -8,20 +8,13 @@ namespace RotaChecker.Classes
     {
         public string Name { get; set; }
         public double Length { get; set; }
-        private Rota Rota { get; }
 
-        public ShiftTemplate(Rota rota, string name, double length)
+        public ShiftTemplate(string name, double length)
         {
-            Rota = rota;
             Name = name;
             Length = length;
         }
 
-        public void CreateShift(DateTime startTime)
-        {
-            DateTime endTime = startTime.AddHours(Length);
-            Rota.AddShift(new Shift(startTime, endTime));
-        }
 
     }
 }

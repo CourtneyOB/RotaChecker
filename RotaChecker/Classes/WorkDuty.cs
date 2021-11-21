@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Globalization;
 
-namespace RotaChecker
+namespace RotaChecker.Classes
 {
     public class WorkDuty : CalendarBase
     {

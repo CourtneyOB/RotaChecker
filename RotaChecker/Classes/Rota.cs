@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Globalization;
-using RotaChecker.Classes;
 
-namespace RotaChecker
+namespace RotaChecker.Classes
 {
     public class Rota : CalendarBase
     {
@@ -99,6 +98,11 @@ namespace RotaChecker
             WeekNumberStart = Calendar.GetWeekOfYear(RotaStartTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
             WeekNumberEnd = Calendar.GetWeekOfYear(RotaEndTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
 
+        }
+        public void AddShiftTemplate(ShiftTemplate t, DateTime startTime)
+        {
+            DateTime endTime = startTime.AddHours(t.Length);
+            AddShift(new Shift(startTime, endTime));
         }
 
         public void AddOnCall(OnCallPeriod o)
