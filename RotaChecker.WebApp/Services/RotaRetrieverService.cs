@@ -9,15 +9,20 @@ namespace RotaChecker.WebApp.Services
     public class RotaRetrieverService
     {
         private Session _session = new Session();
-        public List<ShiftTemplate> Templates = new List<ShiftTemplate>();
+        private List<Template> _templates = new List<Template>();
         public List<WorkDuty> GetWorkDuties()
         {
             return _session.CurrentRota.Duties;
         }
 
-        public void AddTemplate(ShiftTemplate template)
+        public List<Template> GetTemplates()
         {
-            Templates.Add(template);
+            return _templates;
+        }
+
+        public void AddTemplate(Template template)
+        {
+            _templates.Add(template);
         }
 
         public void AddShift(Shift shift)

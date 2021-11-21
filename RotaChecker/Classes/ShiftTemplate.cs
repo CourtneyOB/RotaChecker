@@ -4,15 +4,13 @@ using System.Text;
 
 namespace RotaChecker.Classes
 {
-    public class ShiftTemplate
+    public class ShiftTemplate : Template
     {
-        public string Name { get; set; }
-        public double Length { get; set; }
 
-        public ShiftTemplate(string name, double length)
+
+        public ShiftTemplate(string name, double length) : base (name, length)
         {
-            Name = name;
-            Length = length;
+
         }
 
 

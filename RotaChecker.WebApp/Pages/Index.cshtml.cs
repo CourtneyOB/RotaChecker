@@ -14,9 +14,15 @@ namespace RotaChecker.WebApp.Pages
     {
         private readonly ILogger<IndexModel> _logger;
         public RotaRetrieverService RotaRetrieverService;
-        public DateTime StartTime;
-        public DateTime EndTime;
-        public List<WorkDuty> WorkDuties { get; private set; }
+        public List<Template> Templates { get; private set; }
+        [BindProperty]
+        public string Type { get; set; }
+        [BindProperty]
+        public string TemplateName { get; set; }
+        [BindProperty]
+        public double Length { get; set; }
+        [BindProperty]
+        public double ExpectedHours { get; set; }
 
         public IndexModel(ILogger<IndexModel> logger, RotaRetrieverService rotaRetrieverService)
         {
@@ -26,13 +32,21 @@ namespace RotaChecker.WebApp.Pages
 
         public void OnGet()
         {
-            WorkDuties = RotaRetrieverService.GetWorkDuties();
+            Templates = RotaRetrieverService.GetTemplates();
         }
 
         public void OnPost()
         {
-            RotaRetrieverService.AddShift(new Shift(new DateTime(2021, 12, 1, 9, 0, 0), new DateTime(2021, 12, 1, 17, 0, 0)));
-            OnGet();
+            if(Type == "shift")
+            {
+                RotaRetrieverService.AddTemplate(new ShiftTemplate(TemplateName, Length));
+            }
+            if(Type == "onCall")
+            {
+                RotaRetrieverService.AddTemplate(new OnCallTemplate(TemplateName, Length, ExpectedHours));
+            }
+
+            Templates = RotaRetrieverService.GetTemplates();
         }
     }
 }

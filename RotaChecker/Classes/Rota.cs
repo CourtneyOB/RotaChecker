@@ -105,6 +105,12 @@ namespace RotaChecker.Classes
             AddShift(new Shift(startTime, endTime));
         }
 
+        public void AddOnCallTemplate(OnCallTemplate t, DateTime startTime)
+        {
+            DateTime endTime = startTime.AddHours(t.Length);
+            AddOnCall(new OnCallPeriod(startTime, endTime, TimeSpan.FromHours(t.ExpectedHours)));
+        }
+
         public void AddOnCall(OnCallPeriod o)
         {
 
