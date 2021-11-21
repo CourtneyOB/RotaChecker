@@ -6,3 +6,16 @@
 <h1>@ViewData["Title"]</h1>
 
 <p>Use this page to detail your site's privacy policy.</p>
+<form method="post">
+    <div id="datepicker" data-provide="datepicker">
+        <input type="hidden" for="datesFromDatePicker" name="datesFromDatePicker">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+<script>
+    $('#datepicker').datepicker({
+        format: 'dd/mm/yy',
+        multidate: true
+    });
+</script>
