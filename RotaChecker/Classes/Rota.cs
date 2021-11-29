@@ -159,7 +159,11 @@ namespace RotaChecker.Classes
             List<OnCallPeriod> onCallInRota = Duties.OfType<OnCallPeriod>().ToList();
             return onCallInRota;
         }
-
+        
+        public List<WorkDuty> GetDutiesOnDate(DateTime date)
+        {
+            return Duties.Where(d => d.StartTime.Date == date.Date).ToList();
+        }
 
     }
 }
