@@ -143,5 +143,16 @@ namespace RotaChecker.WPFUI
             }
         }
 
+        private void OnClick_CreateTemplate(object sender, RoutedEventArgs e)
+        {
+            AddTemplateWindow addTemplateWindow = new AddTemplateWindow();
+            addTemplateWindow.Owner = this;
+            addTemplateWindow.DataContext = _session;
+            addTemplateWindow.ShowDialog();
+        }
+        private void TemplateListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            _session.CurrentTemplate = (Template)TemplateListView.SelectedItem;
+        }
     }
 }

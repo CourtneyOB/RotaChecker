@@ -1,0 +1,21 @@
+﻿<Window x:Class="RotaChecker.WPFUI.AddTemplateWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RotaChecker.WPFUI"
+        mc:Ignorable="d"
+        Title="AddTemplateWindow" Height="450" Width="800">
+    <Grid Margin="20">
+        <StackPanel>
+            <TextBlock Text="Template Name"/>
+            <TextBox x:Name="TemplateName" />
+            <TextBlock Text="Template Type"/>
+            <RadioButton x:Name="ShiftButton">Shift</RadioButton>
+            <RadioButton x:Name="OnCallButton">On Call Period</RadioButton>
+            <TextBlock Text="Length (hours)"/>
+            <TextBox x:Name="TemplateLength"/>
+            <Button Content="Create Template" Click="OnClick_SubmitTemplate"/>
+        </StackPanel>
+    </Grid>
+</Window>
