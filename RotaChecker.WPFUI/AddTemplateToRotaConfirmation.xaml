@@ -24,6 +24,7 @@
             <StackPanel x:Name="DatesStackPanel">
                 
             </StackPanel>
+            <TextBlock x:Name="ErrorMessage"/>
             <DockPanel>
                 <Button Content="Cancel" DockPanel.Dock="Left" Width="50"/>
                 <Button Content="Confirm" DockPanel.Dock="Right" Width="50" Click="OnClick_Confirm"/>

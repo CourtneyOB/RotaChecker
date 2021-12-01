@@ -33,7 +33,7 @@ namespace RotaChecker.WPFUI
             PopulateGrid();
         }
 
-        private void PopulateGrid()
+        internal void PopulateGrid()
         {
 
             for(int i = 0; i < _session.CurrentMonth.DaysInMonth.Count(); i++)
@@ -75,7 +75,7 @@ namespace RotaChecker.WPFUI
             GenerateGridLines();
 
         }
-        private void ClearGrid()
+        internal void ClearGrid()
         {
             CalendarGrid.Children.Clear();
         }
@@ -119,7 +119,6 @@ namespace RotaChecker.WPFUI
                 }
             }
         }
-
         private void AddToRota_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             AddTemplateToRotaConfirmation confirmationWindow = new AddTemplateToRotaConfirmation(_selectedDates);

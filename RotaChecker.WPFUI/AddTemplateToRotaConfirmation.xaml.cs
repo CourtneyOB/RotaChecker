@@ -33,10 +33,47 @@ namespace RotaChecker.WPFUI
         private void OnClick_Confirm(object sender, RoutedEventArgs e)
         {
             //check if all the dates are valid
-            foreach(DateTime date in _selectedDates)
+            foreach(DateTime d in _selectedDates)
             {
+                if (Session.CurrentTemplate is ShiftTemplate)
+                {
+                    DateTime startTime = new DateTime(d.Year, d.Month, d.Day, Session.CurrentTemplate.StartTime.Hours, Session.CurrentTemplate.StartTime.Minutes, 0);
+                    DateTime endTime = startTime.AddHours(Session.CurrentTemplate.Length);
+                    try
+                    {
+                        Session.CurrentRota.CanAddShift(new Shift(startTime, endTime));
+                    }
+                    catch (ArgumentException exception)
+                    {
+                        ErrorMessage.Text= $"Cannot add to rota: {exception.Message}";
+                        return;
+                    }
+                }
+                if (Session.CurrentTemplate is OnCallTemplate)
+                {
+                    object o = Session.CurrentTemplate.GetType().GetProperty("ExpectedHours")?.GetValue(Session.CurrentTemplate, null);
+                    double expectedHours = (double)o;
 
+                    DateTime startTime = new DateTime(d.Year, d.Month, d.Day, Session.CurrentTemplate.StartTime.Hours, Session.CurrentTemplate.StartTime.Minutes, 0);
+                    DateTime endTime = startTime.AddHours(Session.CurrentTemplate.Length);
+                    try
+                    {
+                        Session.CurrentRota.CanAddOnCall(new OnCallPeriod(startTime, endTime, TimeSpan.FromHours(expectedHours)));
+                    }
+                    catch (ArgumentException exception)
+                    {
+                        ErrorMessage.Text = $"Cannot add to rota: {exception.Message}";
+                        return;
+                    }
+                }
             }
+
+            Session.CurrentRota.AddTemplateToDateList(Session.CurrentTemplate, _selectedDates);
+            _selectedDates.Clear();
+            (Application.Current.MainWindow as MainWindow).ClearGrid();
+            (Application.Current.MainWindow as MainWindow).PopulateGrid();
+            Close();
+
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Globalization;
 
 namespace RotaChecker.Classes
 {
-    public class CalendarBase
+    public class CalendarBase 
     {
         public Calendar Calendar = CultureInfo.InvariantCulture.Calendar;
     }
