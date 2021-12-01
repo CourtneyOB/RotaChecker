@@ -56,7 +56,7 @@ namespace RotaChecker.Classes
                 }
             }
         }
-        public List<DateTime> DaysInMonth { get; set; } = new List<DateTime>();
+        public List<GridDateCell> DaysInMonth { get; set; } = new List<GridDateCell>();
         public DayOfWeek FirstDay { get; }
         public int Year { get; private set; }
 
@@ -64,20 +64,79 @@ namespace RotaChecker.Classes
         {
             MonthNumber = date.Month;
             FirstDay = new DateTime(date.Year, date.Month, 1).DayOfWeek;
-            DaysInMonth = GetDaysInMonth(date.Month, date.Year);
             Year = date.Year;
+            GetDaysInMonth(date.Month, date.Year);
         }
-        public List<DateTime> GetDaysInMonth(int month, int year)
+        public void GetDaysInMonth(int month, int year)
         {
             List<DateTime> dateList = new List<DateTime>();
-
             int days = DateTime.DaysInMonth(year, month);
             for (int day = 1; day <= days; day++)
             {
                 dateList.Add(new DateTime(year, month, day));
             }
 
-            return dateList;
+            //Work out the grid reference
+            int offset = 0;
+            switch (FirstDay)
+            {
+                case DayOfWeek.Monday:
+                    offset = 0;
+                    break;
+                case DayOfWeek.Tuesday:
+                    offset = 1;
+                    break;
+                case DayOfWeek.Wednesday:
+                    offset = 2;
+                    break;
+                case DayOfWeek.Thursday:
+                    offset = 3;
+                    break;
+                case DayOfWeek.Friday:
+                    offset = 4;
+                    break;
+                case DayOfWeek.Saturday:
+                    offset = 5;
+                    break;
+                case DayOfWeek.Sunday:
+                    offset = 6;
+                    break;
+            }
+
+            for(int i = 0; i < dateList.Count; i++)
+            {
+                int column;
+                int row;
+
+                if (i + offset < 7)
+                {
+                    row = 0;
+                    column = i + offset;
+                }
+                else if (i + offset < 14)
+                {
+                    row = 1;
+                    column = i + offset - 7;
+                }
+                else if (i + offset < 21)
+                {
+                    row = 2;
+                    column = i + offset - 14;
+                }
+                else if (i + offset < 28)
+                {
+                    row = 3;
+                    column = i + offset - 21;
+                }
+                else
+                {
+                    row = 5;
+                    column = i + offset - 28;
+                }
+
+                DaysInMonth.Add(new GridDateCell(dateList[i], column, row));
+            }
+
         }
 
     }
