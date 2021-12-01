@@ -141,6 +141,28 @@ namespace RotaChecker.WPFUI
             _session.CurrentMonth = new Month(new DateTime(_session.CurrentYear, month, 1));
             ClearGrid();
             PopulateGrid();
+
+            //check for selected dates
+            foreach(GridDateCell date in _session.CurrentMonth.DaysInMonth)
+            {
+                if(_selectedDates.Contains(date.Date))
+                {
+                    string coordinate = $"{date.Column},{date.Row}";
+
+                    var rectangles = CalendarGrid.Children.OfType<Rectangle>();
+
+                    foreach(Rectangle rectangle in rectangles)
+                    {
+                        if(rectangle.Tag.ToString() == coordinate)
+                        {
+                            SolidColorBrush red = new SolidColorBrush();
+                            red.Color = Colors.Red;
+                            rectangle.Stroke = red;
+                        }
+                    }
+
+                }
+            }
         }
         private void OnClick_DateSelected(object sender, RoutedEventArgs e)
         {
