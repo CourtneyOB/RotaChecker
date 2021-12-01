@@ -4,8 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RotaChecker.WPFUI"
+        xmlns:classes="clr-namespace:RotaChecker.Classes;assembly=RotaChecker"
         mc:Ignorable="d"
         Title="AddTemplateWindow" Height="450" Width="800">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
+    </Window.Resources>
     <Grid Margin="20">
         <StackPanel>
             <TextBlock Text="Template Name"/>
@@ -15,6 +19,10 @@
             <RadioButton x:Name="OnCallButton">On Call Period</RadioButton>
             <TextBlock Text="Length (hours)"/>
             <TextBox x:Name="TemplateLength"/>
+            <TextBlock x:Name="TemplateLengthError"/>
+            <TextBlock Text="Expected Work (hours)" Visibility="{Binding IsChecked, ElementName=OnCallButton, Converter={StaticResource BooleanToVisibility}}"/>
+            <TextBox x:Name="TemplateExpectedHours" Visibility="{Binding IsChecked, ElementName=OnCallButton, Converter={StaticResource BooleanToVisibility}}"/>
+            <TextBlock x:Name="TemplateExpectedHoursError" Visibility="{Binding IsChecked, ElementName=OnCallButton, Converter={StaticResource BooleanToVisibility}}"/>
             <Button Content="Create Template" Click="OnClick_SubmitTemplate"/>
         </StackPanel>
     </Grid>

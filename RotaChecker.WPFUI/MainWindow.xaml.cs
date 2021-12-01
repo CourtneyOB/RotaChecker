@@ -29,7 +29,6 @@ namespace RotaChecker.WPFUI
             InitializeComponent();
             _session = new Session();
             DataContext = _session;
-            GenerateGridLines();
             PopulateGrid();
         }
 
@@ -92,22 +91,22 @@ namespace RotaChecker.WPFUI
 
                 if (i + offset < 7)
                 {
-                    Grid.SetRow(grid, 1);
+                    Grid.SetRow(grid, 0);
                     Grid.SetColumn(grid, i + offset);
                 }
                 else if(i + offset < 14)
                 {
-                    Grid.SetRow(grid, 2);
+                    Grid.SetRow(grid, 1);
                     Grid.SetColumn(grid, i + offset - 7);
                 }
                 else if(i + offset < 21)
                 {
-                    Grid.SetRow(grid, 3);
+                    Grid.SetRow(grid, 2);
                     Grid.SetColumn(grid, i + offset - 14);
                 }
                 else if(i + offset < 28)
                 {
-                    Grid.SetRow(grid, 4);
+                    Grid.SetRow(grid, 3);
                     Grid.SetColumn(grid, i + offset - 21);
                 }
                 else
@@ -117,15 +116,19 @@ namespace RotaChecker.WPFUI
                 }
                 CalendarGrid.Children.Add(grid);
             }
-            
 
+            GenerateGridLines();
 
+        }
+        private void ClearGrid()
+        {
+            CalendarGrid.Children.Clear();
         }
         private void GenerateGridLines()
         {
             for(int i = 0; i < 7; i++)
             {
-                for(int j = 1; j < 6; j++)
+                for(int j = 0; j < 6; j++)
                 {
                     Rectangle rectangle = new Rectangle();
                     SolidColorBrush grey = new SolidColorBrush();
@@ -134,6 +137,9 @@ namespace RotaChecker.WPFUI
                     transparent.Color = Colors.Transparent;
                     rectangle.Stroke = grey;
                     rectangle.Fill = transparent;
+                    rectangle.Tag = $"{i},{j}";
+                    rectangle.MouseLeftButtonDown += new MouseButtonEventHandler(OnClick_DateSelected);
+
 
                     Grid.SetColumn(rectangle, i);
                     Grid.SetRow(rectangle, j);
@@ -150,9 +156,43 @@ namespace RotaChecker.WPFUI
             addTemplateWindow.DataContext = _session;
             addTemplateWindow.ShowDialog();
         }
-        private void TemplateListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void OnClick_ChangeMonth(object sender, RoutedEventArgs e)
         {
-            _session.CurrentTemplate = (Template)TemplateListView.SelectedItem;
+            int month = _session.CurrentMonth.MonthNumber;
+            if (sender.Equals(PreviousMonthButton))
+            {
+                if(month == 1)
+                {
+                    _session.CurrentYear -= 1;
+                    month = 12;
+                }
+                else
+                {
+                    month -= 1;
+                }
+            }
+            if (sender.Equals(NextMonthButton))
+            {
+                if(month == 12)
+                {
+                    _session.CurrentYear += 1;
+                    month = 1;
+                }
+                else
+                {
+                    month += 1;
+                }
+                
+            }
+            _session.CurrentMonth = new Month(new DateTime(_session.CurrentYear, month, 1));
+            ClearGrid();
+            PopulateGrid();
         }
+        private void OnClick_DateSelected(object sender, RoutedEventArgs e)
+        {
+            Rectangle clickedDate = sender as Rectangle;
+            TestLabel.Content = $"Date Selected: {clickedDate.Tag}";
+        }
+
     }
 }

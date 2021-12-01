@@ -27,13 +27,49 @@ namespace RotaChecker.WPFUI
 
         private void OnClick_SubmitTemplate(object sender, RoutedEventArgs e)
         {
+            if (!Validation.ValidateDouble(TemplateLength.Text))
+            {
+                TemplateLengthError.Text = "Value must be a number";
+                return;
+            }
+
+            double length = Double.Parse(TemplateLength.Text);
+            if(length <= 0)
+            {
+                TemplateLengthError.Text = "Value must be more than 0";
+                return;
+            }
+            if (length > 24)
+            {
+                TemplateLengthError.Text = "Value must be less than 24";
+                return;
+            }
+
             if (ShiftButton.IsChecked == true)
             {
-                Session.TemplateLibrary.AddTemplate(new ShiftTemplate(TemplateName.Text, 10.0));
+                Session.TemplateLibrary.AddTemplate(new ShiftTemplate(TemplateName.Text, length));
             }
             else if(OnCallButton.IsChecked == true)
             {
-                Session.TemplateLibrary.AddTemplate(new OnCallTemplate(TemplateName.Text, 10.0, 3.0));
+                if (!Validation.ValidateDouble(TemplateExpectedHours.Text))
+                {
+                    TemplateExpectedHoursError.Text = "Value must be a number";
+                    return;
+                }
+
+                double expectedHours = Double.Parse(TemplateExpectedHours.Text);
+                if (expectedHours > length)
+                {
+                    TemplateExpectedHoursError.Text = "Expected work hours cannot be more than overall length";
+                    return;
+                }
+                if (expectedHours <= 0)
+                {
+                    TemplateExpectedHoursError.Text = "Value must be more than 0";
+                    return;
+                }
+
+                Session.TemplateLibrary.AddTemplate(new OnCallTemplate(TemplateName.Text, length, expectedHours));
             }
             Close();
         }

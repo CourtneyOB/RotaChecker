@@ -35,6 +35,9 @@ namespace RotaChecker.Classes
                     case 6:
                         DisplayName = "June";
                         break;
+                    case 7:
+                        DisplayName = "July";
+                        break;
                     case 8:
                         DisplayName = "August";
                         break;
@@ -55,12 +58,14 @@ namespace RotaChecker.Classes
         }
         public List<DateTime> DaysInMonth { get; set; } = new List<DateTime>();
         public DayOfWeek FirstDay { get; }
+        public int Year { get; private set; }
 
         public Month(DateTime date)
         {
             MonthNumber = date.Month;
             FirstDay = new DateTime(date.Year, date.Month, 1).DayOfWeek;
             DaysInMonth = GetDaysInMonth(date.Month, date.Year);
+            Year = date.Year;
         }
         public List<DateTime> GetDaysInMonth(int month, int year)
         {

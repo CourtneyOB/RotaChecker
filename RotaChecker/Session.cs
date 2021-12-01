@@ -11,6 +11,7 @@ namespace RotaChecker
         private Month _currentMonth;
         private TemplateLibrary _templateLibrary;
         private Template _currentTemplate;
+        private int _currentYear;
 
         public Rota CurrentRota 
         {
@@ -27,6 +28,15 @@ namespace RotaChecker
             set
             {
                 _currentMonth = value;
+                OnPropertyChanged();
+            }
+        }
+        public int CurrentYear
+        {
+            get { return _currentYear; }
+            set
+            {
+                _currentYear = value;
                 OnPropertyChanged();
             }
         }
@@ -53,7 +63,7 @@ namespace RotaChecker
             CurrentRota = RotaBuilder.CreateRota();
             TemplateLibrary = new TemplateLibrary();
             CurrentMonth = new Month(CurrentRota.RotaStartTime);
-
+            CurrentYear = CurrentRota.RotaStartTime.Year;
         }
 
     }
