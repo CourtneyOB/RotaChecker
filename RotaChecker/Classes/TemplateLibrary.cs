@@ -15,8 +15,8 @@ namespace RotaChecker.Classes
         public TemplateLibrary()
         {
             TemplateList = new ObservableCollection<Template>();
-            AddTemplate(new ShiftTemplate("Normal day", 8.0));
-            AddTemplate(new OnCallTemplate("On call", 24.0, 3.0));
+            AddTemplate(new ShiftTemplate("Normal day", new TimeSpan(9,0,0), 8.0));
+            AddTemplate(new OnCallTemplate("On call", new TimeSpan(9,0,0), 24.0, 3.0));
         }
 
         public void AddTemplate(ShiftTemplate template)

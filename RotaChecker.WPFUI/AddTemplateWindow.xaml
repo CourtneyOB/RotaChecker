@@ -17,6 +17,9 @@
             <TextBlock Text="Template Type"/>
             <RadioButton x:Name="ShiftButton">Shift</RadioButton>
             <RadioButton x:Name="OnCallButton">On Call Period</RadioButton>
+            <TextBlock Text="Start time (24 hour format)"/>
+            <TextBox x:Name="StartTime"/>
+            <TextBlock x:Name="StartTimeError"/>
             <TextBlock Text="Length (hours)"/>
             <TextBox x:Name="TemplateLength"/>
             <TextBlock x:Name="TemplateLengthError"/>

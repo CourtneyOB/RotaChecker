@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Globalization;
 
 namespace RotaChecker.WPFUI
 {
@@ -15,6 +16,11 @@ namespace RotaChecker.WPFUI
         public static bool ValidateDouble(string data)
         {
             return double.TryParse(data, out _);
+        }
+
+        public static bool ValidateDateTime(string data)
+        {
+            return DateTime.TryParseExact(data, "HH:mm", CultureInfo.InvariantCulture,DateTimeStyles.None, out _);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -45,9 +46,18 @@ namespace RotaChecker.WPFUI
                 return;
             }
 
+            if (!Validation.ValidateDateTime(StartTime.Text))
+            {
+                StartTimeError.Text = "Value must be a time in 24 hour format ('HH:mm')";
+                return;
+            }
+
+            DateTime selectedDate = DateTime.ParseExact(StartTime.Text, "HH:mm", CultureInfo.InvariantCulture);
+            TimeSpan startTime = new TimeSpan(selectedDate.Hour, selectedDate.Minute, 0);
+
             if (ShiftButton.IsChecked == true)
             {
-                Session.TemplateLibrary.AddTemplate(new ShiftTemplate(TemplateName.Text, length));
+                Session.TemplateLibrary.AddTemplate(new ShiftTemplate(TemplateName.Text, startTime, length));
             }
             else if(OnCallButton.IsChecked == true)
             {
@@ -69,7 +79,7 @@ namespace RotaChecker.WPFUI
                     return;
                 }
 
-                Session.TemplateLibrary.AddTemplate(new OnCallTemplate(TemplateName.Text, length, expectedHours));
+                Session.TemplateLibrary.AddTemplate(new OnCallTemplate(TemplateName.Text, startTime, length, expectedHours));
             }
             Close();
         }

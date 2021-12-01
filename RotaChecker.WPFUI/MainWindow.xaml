@@ -7,6 +7,9 @@
         xmlns:classes="clr-namespace:RotaChecker.Classes;assembly=RotaChecker"
         mc:Ignorable="d"
         Title="Rota Checker" Height="800" Width="1600">
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static local:Commands.AddToRota}" CanExecute="AddToRota_CanExecute" Executed="AddToRota_Executed"/>
+    </Window.CommandBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -20,7 +23,7 @@
         <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Content="Menu" Background="AliceBlue" x:Name="TestLabel"/>
 
         <!--Templates-->
-        <Grid Grid.Row="1" Grid.Column="0" Background="LightSteelBlue">
+        <Grid Grid.Row="1" Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="20"/>
                 <RowDefinition Height="*"/>
@@ -36,7 +39,7 @@
                 <ColumnDefinition Width="20"/>
             </Grid.ColumnDefinitions>
             <Grid Grid.Row="1" Grid.Column="1">
-                <ListView Name="TemplateListView" ItemsSource="{Binding TemplateLibrary.TemplateList}" SelectedItem="{Binding CurrentTemplate}">
+                <ListView Name="TemplateListView" ItemsSource="{Binding TemplateLibrary.TemplateList}" SelectedItem="{Binding CurrentTemplate}" Background="LavenderBlush">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <WrapPanel>
@@ -57,6 +60,10 @@
                                     <TextBlock Text="{Binding Name}"/>
                                 </WrapPanel>
                                 <WrapPanel>
+                                    <TextBlock Text="Start Time: "/>
+                                    <TextBlock Text="{Binding StartTime}"/>
+                                </WrapPanel>
+                                <WrapPanel>
                                     <TextBlock Text="Length (Hours): "/>
                                     <TextBlock Text="{Binding Length}"/>
                                 </WrapPanel>
@@ -68,6 +75,10 @@
                                 <WrapPanel>
                                     <TextBlock Text="Template Name: "/>
                                     <TextBlock Text="{Binding Name}"/>
+                                </WrapPanel>
+                                <WrapPanel>
+                                    <TextBlock Text="Start Time: "/>
+                                    <TextBlock Text="{Binding StartTime}"/>
                                 </WrapPanel>
                                 <WrapPanel>
                                     <TextBlock Text="Length (Hours): "/>
@@ -92,6 +103,8 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="20"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="20"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="20"/>
@@ -100,7 +113,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- Top Bar-->
-            <Grid Grid.Row="1" Grid.Column="1" Background="BurlyWood">
+            <Grid Grid.Row="1" Grid.Column="1" Background="LavenderBlush">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
@@ -113,16 +126,16 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Button Grid.Column="2" Grid.Row="0" Content="Previous" Width="60" HorizontalAlignment="Center" Click="OnClick_ChangeMonth" x:Name="PreviousMonthButton"/>
-                <WrapPanel Grid.Column="3" Grid.Row="0" HorizontalAlignment="Center">
+                <Button Grid.Column="2" Grid.Row="0" Content="Previous" Width="60" HorizontalAlignment="Center" Click="OnClick_ChangeMonth" x:Name="PreviousMonthButton" Margin="3.0"/>
+                <WrapPanel Grid.Column="3" Grid.Row="0" HorizontalAlignment="Center" Margin="3.0">
                     <Label Content="{Binding CurrentMonth.DisplayName}"/>
                     <Label Content="{Binding CurrentYear}"/>
                 </WrapPanel>
-                <Button Grid.Column="4" Grid.Row="0" Content="Next" Width="60" HorizontalAlignment="Center" Click="OnClick_ChangeMonth" x:Name="NextMonthButton"/>
+                <Button Grid.Column="4" Grid.Row="0" Content="Next" Width="60" HorizontalAlignment="Center" Click="OnClick_ChangeMonth" x:Name="NextMonthButton" Margin="3.0"/>
             </Grid>
 
             <!--Generated Grid-->
-            <Grid Grid.Row="2" Grid.Column="1" Background="BurlyWood" x:Name="CalendarGrid">
+            <Grid Grid.Row="2" Grid.Column="1" Background="LavenderBlush" x:Name="CalendarGrid">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
@@ -140,6 +153,11 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
             </Grid>
+
+            <DockPanel Grid.Row="4" Grid.Column="1">
+                <Button Content="Add to Rota" DockPanel.Dock="Right" Width="100" Command="{x:Static local:Commands.AddToRota}"/>
+            </DockPanel>
+            
         </Grid>
     </Grid>
 </Window>

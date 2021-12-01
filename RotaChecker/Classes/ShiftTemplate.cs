@@ -7,7 +7,7 @@ namespace RotaChecker.Classes
     public class ShiftTemplate : Template
     {
 
-        public ShiftTemplate(string name, double length) : base (name, length)
+        public ShiftTemplate(string name, TimeSpan start, double length) : base (name, start, length)
         {
 
         }

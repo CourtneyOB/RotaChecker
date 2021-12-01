@@ -39,6 +39,7 @@ namespace RotaChecker.WPFUI
             for(int i = 0; i < _session.CurrentMonth.DaysInMonth.Count(); i++)
             {
                 Grid grid = new Grid();
+                grid.Margin = new Thickness(10.0);
                 //first row has the date number
                 RowDefinition firstRow = new RowDefinition();
                 firstRow.Height = GridLength.Auto;
@@ -91,6 +92,7 @@ namespace RotaChecker.WPFUI
                     transparent.Color = Colors.Transparent;
                     rectangle.Stroke = grey;
                     rectangle.Fill = transparent;
+                    rectangle.Margin = new Thickness(1.0);
                     rectangle.Tag = $"{i},{j}";
                     rectangle.MouseLeftButtonDown += new MouseButtonEventHandler(OnClick_DateSelected);
 
@@ -101,6 +103,29 @@ namespace RotaChecker.WPFUI
                     CalendarGrid.Children.Add(rectangle);
                 }
             }
+        }
+
+        private void AddToRota_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if(_session != null)
+            {
+                if (_selectedDates != null && _session.CurrentTemplate != null)
+                {
+                    e.CanExecute = true;
+                }
+                else
+                {
+                    e.CanExecute = false;
+                }
+            }
+        }
+
+        private void AddToRota_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            AddTemplateToRotaConfirmation confirmationWindow = new AddTemplateToRotaConfirmation(_selectedDates);
+            confirmationWindow.Owner = this;
+            confirmationWindow.DataContext = _session;
+            confirmationWindow.ShowDialog();
         }
 
         private void OnClick_CreateTemplate(object sender, RoutedEventArgs e)

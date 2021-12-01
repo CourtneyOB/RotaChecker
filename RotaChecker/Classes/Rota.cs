@@ -99,18 +99,6 @@ namespace RotaChecker.Classes
             WeekNumberEnd = Calendar.GetWeekOfYear(RotaEndTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
 
         }
-        public void AddShiftTemplate(ShiftTemplate t, DateTime startTime)
-        {
-            DateTime endTime = startTime.AddHours(t.Length);
-            AddShift(new Shift(startTime, endTime));
-        }
-
-        public void AddOnCallTemplate(OnCallTemplate t, DateTime startTime)
-        {
-            DateTime endTime = startTime.AddHours(t.Length);
-            AddOnCall(new OnCallPeriod(startTime, endTime, TimeSpan.FromHours(t.ExpectedHours)));
-        }
-
         public void AddOnCall(OnCallPeriod o)
         {
 
@@ -119,7 +107,7 @@ namespace RotaChecker.Classes
                 throw new ArgumentException("Start time must be before end time");
             }
 
-            if(o.ExpectedHours.TotalHours <= 0)
+            if (o.ExpectedHours.TotalHours <= 0)
             {
                 throw new ArgumentException("Expected hours must be more than 0");
             }
@@ -146,6 +134,21 @@ namespace RotaChecker.Classes
 
             WeekNumberStart = Calendar.GetWeekOfYear(RotaStartTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
             WeekNumberEnd = Calendar.GetWeekOfYear(RotaEndTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
+        }
+        public void AddShiftTemplate(ShiftTemplate t, DateTime startTime)
+        {
+            DateTime endTime = startTime.AddHours(t.Length);
+            AddShift(new Shift(startTime, endTime));
+        }
+        public void AddOnCallTemplate(OnCallTemplate t, DateTime startTime)
+        {
+            DateTime endTime = startTime.AddHours(t.Length);
+            AddOnCall(new OnCallPeriod(startTime, endTime, TimeSpan.FromHours(t.ExpectedHours)));
+        }
+
+        public void AddTemplateList(List<Template> templateList)
+        {
+
         }
 
         public List<Shift> GetShifts()

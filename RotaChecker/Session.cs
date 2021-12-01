@@ -55,8 +55,10 @@ namespace RotaChecker
             {
                 _currentTemplate = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(CanAddTemplate));
             }
         }
+        public bool CanAddTemplate => CurrentTemplate != null;
 
         public Session()
         {
