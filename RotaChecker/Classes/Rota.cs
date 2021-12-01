@@ -88,6 +88,10 @@ namespace RotaChecker.Classes
                 {
                     throw new ArgumentException("New shift overlaps with existing shift");
                 }
+                else if (shift.StartTime >= s.StartTime && s.EndTime >= shift.EndTime)
+                {
+                    throw new ArgumentException("New shift overlaps with existing shift");
+                }
             }
         }
         public void CanAddOnCall(OnCallPeriod o)
@@ -114,29 +118,16 @@ namespace RotaChecker.Classes
                 {
                     throw new ArgumentException("New on call overlaps with existing on call");
                 }
+                else if (onCall.StartTime >= o.StartTime && o.EndTime >= onCall.EndTime)
+                {
+                    throw new ArgumentException("New on call overlaps with existing shift");
+                }
             }
         }
         public void AddShift(Shift s)
         {
 
-            if(DateTime.Compare(s.StartTime, s.EndTime) >= 0)
-            {
-                throw new ArgumentException("Start time must be before end time");
-            }
-            
-            List<Shift> shiftsInRota = GetShifts();
-
-            foreach(Shift shift in shiftsInRota)
-            {
-                if(shift.StartTime <= s.StartTime && s.StartTime < shift.EndTime)
-                {
-                    throw new ArgumentException("New shift overlaps with existing shift");
-                }
-                else if(shift.EndTime >= s.EndTime && s.EndTime > shift.StartTime)
-                {
-                    throw new ArgumentException("New shift overlaps with existing shift");
-                }
-            }
+            CanAddShift(s);
                 
             Duties.Add(s);   
             RotaStartTime = Duties.Select(d => d.StartTime).Min(); 
@@ -149,29 +140,7 @@ namespace RotaChecker.Classes
         public void AddOnCall(OnCallPeriod o)
         {
 
-            if (DateTime.Compare(o.StartTime, o.EndTime) >= 0)
-            {
-                throw new ArgumentException("Start time must be before end time");
-            }
-
-            if (o.ExpectedHours.TotalHours <= 0)
-            {
-                throw new ArgumentException("Expected hours must be more than 0");
-            }
-
-            List<OnCallPeriod> onCallsInRota = GetOnCalls();
-
-            foreach (OnCallPeriod onCall in onCallsInRota)
-            {
-                if (onCall.StartTime <= o.StartTime && o.StartTime < onCall.EndTime)
-                {
-                    throw new ArgumentException("New on call overlaps with existing on call");
-                }
-                else if (onCall.EndTime >= o.EndTime && o.EndTime > onCall.StartTime)
-                {
-                    throw new ArgumentException("New on call overlaps with existing on call");
-                }
-            }
+            CanAddOnCall(o);
 
 
             Duties.Add(o);
