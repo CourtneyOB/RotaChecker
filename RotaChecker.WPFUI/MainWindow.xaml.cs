@@ -56,10 +56,41 @@ namespace RotaChecker.WPFUI
                         row.Height = new GridLength(1, GridUnitType.Star);
                         grid.RowDefinitions.Add(row);
 
-                        TextBlock eventText = new TextBlock();
-                        eventText.Text = $"{_session.CurrentRota.GetDutiesOnDate(_session.CurrentMonth.DaysInMonth[i].Date)[j].StartTime}";
-                        Grid.SetRow(eventText, j+1);
-                        grid.Children.Add(eventText);
+                        StackPanel panel = new StackPanel();
+                        TextBlock dutyName = new TextBlock();
+                        TextBlock dutyTime = new TextBlock();
+
+                        var duty = _session.CurrentRota.GetDutiesOnDate(_session.CurrentMonth.DaysInMonth[i].Date)[j];
+
+                        if (duty is Shift)
+                        {
+                            if(duty.TemplateName != null)
+                            {
+                                dutyName.Text = $"Shift: {duty.TemplateName}";
+                            }
+                            else
+                            {
+                                dutyName.Text = "Shift";
+                            }      
+                        }
+                        else if(duty is OnCallPeriod)
+                        {
+                            if (duty.TemplateName != null)
+                            {
+                                dutyName.Text = $"On Call: {duty.TemplateName}";
+                            }
+                            else
+                            {
+                                dutyName.Text = "On Call";
+                            }
+                        }
+                        dutyTime.Text = $"{duty.StartTime.TimeOfDay}";
+
+                        panel.Children.Add(dutyName);
+                        panel.Children.Add(dutyTime);
+
+                        Grid.SetRow(panel, j+1);
+                        grid.Children.Add(panel);
                     }
                 }
 

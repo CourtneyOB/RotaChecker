@@ -191,7 +191,7 @@ namespace RotaChecker.Classes
                 {
                     DateTime startTime = new DateTime(d.Year, d.Month, d.Day, t.StartTime.Hours, t.StartTime.Minutes, 0);
                     DateTime endTime = startTime.AddHours(t.Length);
-                    AddShift(new Shift(startTime, endTime));
+                    AddShift(new Shift(startTime, endTime, t.Name));
                 }
                 if (t is OnCallTemplate)
                 {
@@ -200,7 +200,7 @@ namespace RotaChecker.Classes
 
                     DateTime startTime = new DateTime(d.Year, d.Month, d.Day, t.StartTime.Hours, t.StartTime.Minutes, 0);
                     DateTime endTime = startTime.AddHours(t.Length);
-                    AddOnCall(new OnCallPeriod(startTime, endTime, TimeSpan.FromHours(expectedHours)));
+                    AddOnCall(new OnCallPeriod(startTime, endTime, TimeSpan.FromHours(expectedHours), t.Name));
                 }
             }
 

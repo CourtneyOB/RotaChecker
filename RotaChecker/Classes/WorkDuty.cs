@@ -12,12 +12,14 @@ namespace RotaChecker.Classes
         public TimeSpan Length { get; }
         public bool Weekend { get; }
         public int WeekNumber { get; }
+        public string TemplateName { get; }
 
-        public WorkDuty(DateTime start, DateTime end)
+        public WorkDuty(DateTime start, DateTime end, string templateName = null)
         {
             StartTime = start;
             EndTime = end;
             Length = EndTime - StartTime;
+            TemplateName = templateName;
 
             if (start.DayOfWeek == DayOfWeek.Saturday || start.DayOfWeek == DayOfWeek.Sunday)
             {

@@ -8,7 +8,7 @@ namespace RotaChecker.Classes
     {
         public TimeSpan ExpectedHours { get; }
 
-        public OnCallPeriod(DateTime start, DateTime end, TimeSpan expectedHours) : base(start, end)
+        public OnCallPeriod(DateTime start, DateTime end, TimeSpan expectedHours, string templateName = null) : base(start, end, templateName)
         {
             ExpectedHours = expectedHours;
 
