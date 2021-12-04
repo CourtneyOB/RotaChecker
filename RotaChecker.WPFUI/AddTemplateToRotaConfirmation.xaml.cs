@@ -78,6 +78,7 @@ namespace RotaChecker.WPFUI
         private void OnClick_Cancel(object sender, RoutedEventArgs e)
         {
             Close();
+
         }
     }
 }
