@@ -13,5 +13,11 @@ namespace RotaChecker.WPFUI
             "AddToRota",
             typeof(Commands)
             );
+        public static readonly RoutedUICommand RemoveFromRota = new RoutedUICommand
+            (
+            "RemoveFromRota",
+            "RemoveFromRota",
+            typeof(Commands)
+            );
     }
 }

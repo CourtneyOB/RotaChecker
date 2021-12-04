@@ -6,26 +6,29 @@
         xmlns:local="clr-namespace:RotaChecker.WPFUI"
         xmlns:classes="clr-namespace:RotaChecker.Classes;assembly=RotaChecker"
         mc:Ignorable="d"
-        Title="AddTemplateWindow" Height="450" Width="800">
+        Title="AddTemplateWindow" Height="550" Width="800">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
     </Window.Resources>
-    <Grid Margin="20">
+    <Grid Margin="40,20,40,20">
         <StackPanel>
-            <TextBlock Text="Template Name"/>
-            <TextBox x:Name="TemplateName" />
-            <TextBlock Text="Template Type"/>
+            <TextBlock Text="Template Name" FontSize="12pt" Margin="0,0,0,5"/>
+            <TextBox x:Name="TemplateName"/>
+            <TextBlock x:Name="TemplateNameError" Margin="0,0,0,10" Foreground="Red"/>
+            <TextBlock Text="Template Type" FontSize="12pt" Margin="0,0,0,5"/>
             <RadioButton x:Name="ShiftButton">Shift</RadioButton>
             <RadioButton x:Name="OnCallButton">On Call Period</RadioButton>
-            <TextBlock Text="Start time (24 hour format)"/>
+            <TextBlock x:Name="RadioButtonError" Margin="0,0,0,10" Foreground="Red"/>
+            <TextBlock Text="Start time (24 hour format)" FontSize="12pt" Margin="0,0,0,5"/>
             <TextBox x:Name="StartTime"/>
-            <TextBlock x:Name="StartTimeError"/>
-            <TextBlock Text="Length (hours)"/>
+            <TextBlock x:Name="StartTimeError" Margin="0,0,0,10" Foreground="Red"/>
+            <TextBlock Text="Length (hours)" FontSize="12pt" Margin="0,0,0,5"/>
             <TextBox x:Name="TemplateLength"/>
-            <TextBlock x:Name="TemplateLengthError"/>
-            <TextBlock Text="Expected Work (hours)" Visibility="{Binding IsChecked, ElementName=OnCallButton, Converter={StaticResource BooleanToVisibility}}"/>
+            <TextBlock x:Name="TemplateLengthError" Margin="0,0,0,10" Foreground="Red"/>
+            <TextBlock Text="Expected Work (hours)" FontSize="12pt" Margin="0,0,0,5" Visibility="{Binding IsChecked, ElementName=OnCallButton, Converter={StaticResource BooleanToVisibility}}"/>
             <TextBox x:Name="TemplateExpectedHours" Visibility="{Binding IsChecked, ElementName=OnCallButton, Converter={StaticResource BooleanToVisibility}}"/>
-            <TextBlock x:Name="TemplateExpectedHoursError" Visibility="{Binding IsChecked, ElementName=OnCallButton, Converter={StaticResource BooleanToVisibility}}"/>
+            <TextBlock x:Name="TemplateExpectedHoursError" Margin="0,0,0,10" Foreground="Red" Visibility="{Binding IsChecked, ElementName=OnCallButton, Converter={StaticResource BooleanToVisibility}}"/>
+            <Separator Margin="0,10,0,10"/>
             <Button Content="Create Template" Click="OnClick_SubmitTemplate"/>
         </StackPanel>
     </Grid>

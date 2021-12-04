@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using RotaChecker;
 using RotaChecker.Classes;
+using System.Linq;
 
 namespace RotaChecker.WPFUI
 {
@@ -28,14 +29,50 @@ namespace RotaChecker.WPFUI
 
         private void OnClick_SubmitTemplate(object sender, RoutedEventArgs e)
         {
+            bool anyErrors = false;
+
+            TemplateNameError.Text = "";
+            TemplateLengthError.Text = "";
+            StartTimeError.Text = "";
+            RadioButtonError.Text = "";
+            TemplateExpectedHoursError.Text = "";
+
+            if(String.IsNullOrEmpty(TemplateName.Text))
+            {
+                TemplateNameError.Text = "Provide a name for this template";
+                anyErrors = true;
+            }
+
+            if(Session.TemplateLibrary.TemplateList.FirstOrDefault(t=>t.Name == TemplateName.Text) != null)
+            {
+                TemplateNameError.Text = "There is already a template with that name";
+                anyErrors = true;
+            }
+
+            if (!Validation.ValidateDateTime(StartTime.Text))
+            {
+                StartTimeError.Text = "Value must be a time in 24 hour format ('HH:mm')";
+                anyErrors = true;
+            }
+
             if (!Validation.ValidateDouble(TemplateLength.Text))
             {
                 TemplateLengthError.Text = "Value must be a number";
+                anyErrors = true;
+            }
+
+            if(ShiftButton.IsChecked != true && OnCallButton.IsChecked != true)
+            {
+                RadioButtonError.Text = "You must select a template type";
                 return;
             }
 
+            if (anyErrors)
+            {
+                return;
+            }
             double length = Double.Parse(TemplateLength.Text);
-            if(length <= 0)
+            if (length <= 0)
             {
                 TemplateLengthError.Text = "Value must be more than 0";
                 return;
@@ -46,20 +83,10 @@ namespace RotaChecker.WPFUI
                 return;
             }
 
-            if (!Validation.ValidateDateTime(StartTime.Text))
-            {
-                StartTimeError.Text = "Value must be a time in 24 hour format ('HH:mm')";
-                return;
-            }
-
             DateTime selectedDate = DateTime.ParseExact(StartTime.Text, "HH:mm", CultureInfo.InvariantCulture);
             TimeSpan startTime = new TimeSpan(selectedDate.Hour, selectedDate.Minute, 0);
 
-            if (ShiftButton.IsChecked == true)
-            {
-                Session.TemplateLibrary.AddTemplate(new ShiftTemplate(TemplateName.Text, startTime, length));
-            }
-            else if(OnCallButton.IsChecked == true)
+            if (OnCallButton.IsChecked == true)
             {
                 if (!Validation.ValidateDouble(TemplateExpectedHours.Text))
                 {
@@ -78,9 +105,14 @@ namespace RotaChecker.WPFUI
                     TemplateExpectedHoursError.Text = "Value must be more than 0";
                     return;
                 }
-
+                
                 Session.TemplateLibrary.AddTemplate(new OnCallTemplate(TemplateName.Text, startTime, length, expectedHours));
             }
+            else if(ShiftButton.IsChecked == true)
+            {
+                Session.TemplateLibrary.AddTemplate(new ShiftTemplate(TemplateName.Text, startTime, length));
+            }
+
             Close();
         }
     }

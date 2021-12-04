@@ -22,8 +22,8 @@ namespace RotaChecker.WPFUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly Session _session;
-        private List<DateTime> _selectedDates = new List<DateTime>();
+        private Session _session;
+        public List<DateTime> SelectedDates = new List<DateTime>();
 
         public MainWindow()
         {
@@ -35,6 +35,13 @@ namespace RotaChecker.WPFUI
 
         internal void PopulateGrid()
         {
+            if(_session.CurrentMonth.DaysInMonth.Last().Row == 5)
+            {
+                RowDefinition row = new RowDefinition();
+                row.Name = "ExtraRow";
+                row.Height = new GridLength(1, GridUnitType.Star);
+                CalendarGrid.RowDefinitions.Add(row);
+            }
 
             for(int i = 0; i < _session.CurrentMonth.DaysInMonth.Count(); i++)
             {
@@ -109,6 +116,10 @@ namespace RotaChecker.WPFUI
         internal void ClearGrid()
         {
             CalendarGrid.Children.Clear();
+            if(CalendarGrid.RowDefinitions.Count > 5)
+            {
+                CalendarGrid.RowDefinitions.RemoveAt(5);
+            }
         }
         private void GenerateGridLines()
         {
@@ -116,22 +127,22 @@ namespace RotaChecker.WPFUI
             {
                 for(int j = 0; j < 6; j++)
                 {
-                    Rectangle rectangle = new Rectangle();
+                    Border border = new Border();
                     SolidColorBrush grey = new SolidColorBrush();
-                    grey.Color = Colors.LightGray;
-                    SolidColorBrush transparent = new SolidColorBrush();
-                    transparent.Color = Colors.Transparent;
-                    rectangle.Stroke = grey;
-                    rectangle.Fill = transparent;
-                    rectangle.Margin = new Thickness(1.0);
-                    rectangle.Tag = $"{i},{j}";
-                    rectangle.MouseLeftButtonDown += new MouseButtonEventHandler(OnClick_DateSelected);
+                    grey.Color = (Color)ColorConverter.ConvertFromString("#B1BDC7");
+                    border.BorderBrush = grey;
+                    border.BorderThickness = new Thickness(1.0);
+                    border.Background = Brushes.Transparent;
+                    border.Margin = new Thickness(1.0);
+                    border.CornerRadius = new CornerRadius(3);
+                    border.Tag = $"{i},{j}";
+                    border.MouseLeftButtonDown += new MouseButtonEventHandler(OnClick_DateSelected);
 
 
-                    Grid.SetColumn(rectangle, i);
-                    Grid.SetRow(rectangle, j);
+                    Grid.SetColumn(border, i);
+                    Grid.SetRow(border, j);
 
-                    CalendarGrid.Children.Add(rectangle);
+                    CalendarGrid.Children.Add(border);
                 }
             }
         }
@@ -140,7 +151,7 @@ namespace RotaChecker.WPFUI
         {
             if(_session != null)
             {
-                if (_selectedDates != null && _session.CurrentTemplate != null)
+                if (SelectedDates.Count() > 0 && _session.CurrentTemplate != null)
                 {
                     e.CanExecute = true;
                 }
@@ -152,10 +163,41 @@ namespace RotaChecker.WPFUI
         }
         private void AddToRota_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            AddTemplateToRotaConfirmation confirmationWindow = new AddTemplateToRotaConfirmation(_selectedDates);
+            AddTemplateToRotaConfirmation confirmationWindow = new AddTemplateToRotaConfirmation(SelectedDates);
             confirmationWindow.Owner = this;
             confirmationWindow.DataContext = _session;
             confirmationWindow.ShowDialog();
+        }
+        private void RemoveFromRota_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if(_session != null)
+            {
+                if(SelectedDates.Count() == 1 && _session.CurrentRota.GetDutiesOnDate(SelectedDates[0].Date).Count() > 0)
+                {
+                    e.CanExecute = true;
+                }
+                else
+                {
+                    e.CanExecute = false;
+                }
+            }
+        }
+        private void RemoveFromRota_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if(_session.CurrentRota.GetDutiesOnDate(SelectedDates[0].Date).Count() > 1)
+            {
+                SelectShiftToRemove selectShiftToRemove = new SelectShiftToRemove(_session.CurrentRota.GetDutiesOnDate(SelectedDates[0].Date));
+                selectShiftToRemove.Owner = this;
+                selectShiftToRemove.DataContext = _session;
+                selectShiftToRemove.ShowDialog();
+            }
+            else
+            {
+                RemoveFromRotaConfirmation removeWindow = new RemoveFromRotaConfirmation(_session.CurrentRota.GetDutiesOnDate(SelectedDates[0].Date)[0]);
+                removeWindow.Owner = this;
+                removeWindow.DataContext = _session;
+                removeWindow.ShowDialog();
+            }
         }
 
         private void OnClick_CreateTemplate(object sender, RoutedEventArgs e)
@@ -200,7 +242,7 @@ namespace RotaChecker.WPFUI
             //check for selected dates
             foreach(GridDateCell date in _session.CurrentMonth.DaysInMonth)
             {
-                if(_selectedDates.Contains(date.Date))
+                if(SelectedDates.Contains(date.Date))
                 {
                     string coordinate = $"{date.Column},{date.Row}";
 
@@ -221,7 +263,7 @@ namespace RotaChecker.WPFUI
         }
         private void OnClick_DateSelected(object sender, RoutedEventArgs e)
         {
-            Rectangle clickedDate = sender as Rectangle;
+            Border clickedDate = sender as Border;
 
             string[] coordinatesArray = clickedDate.Tag.ToString().Split(',');
             int column = Convert.ToInt32(coordinatesArray[0]);
@@ -232,22 +274,32 @@ namespace RotaChecker.WPFUI
             if(selectedGridCell != null)
             {
                 //Check if it is already selected, and if so then remove it.
-                if (_selectedDates.Contains(selectedGridCell.Date))
+                if (SelectedDates.Contains(selectedGridCell.Date))
                 {
                     SolidColorBrush grey = new SolidColorBrush();
-                    grey.Color = Colors.LightGray;
-                    clickedDate.Stroke = grey;
-                    _selectedDates.Remove(selectedGridCell.Date);
+                    grey.Color = (Color)ColorConverter.ConvertFromString("#B1BDC7");
+                    clickedDate.BorderBrush = grey;
+                    clickedDate.BorderThickness = new Thickness(1.0);
+                    SelectedDates.Remove(selectedGridCell.Date);
                 }
                 else
                 {
                     SolidColorBrush red = new SolidColorBrush();
-                    red.Color = Colors.Red;
-                    clickedDate.Stroke = red;
-                    _selectedDates.Add(selectedGridCell.Date);
+                    red.Color = (Color)ColorConverter.ConvertFromString("#CC6531");
+                    clickedDate.BorderBrush = red;
+                    clickedDate.BorderThickness = new Thickness(1.8);
+                    SelectedDates.Add(selectedGridCell.Date);
                 }
 
             }
+        }
+        private void OnClick_OpenCompliance(object sender, RoutedEventArgs e)
+        {
+            _session.ComplianceChecker = new Compliance(_session.CurrentRota);
+            ComplianceWindow complianceWindow = new ComplianceWindow(_session);
+            complianceWindow.Owner = this;
+            complianceWindow.DataContext = _session;
+            complianceWindow.ShowDialog();
         }
 
     }

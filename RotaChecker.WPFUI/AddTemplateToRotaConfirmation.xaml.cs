@@ -25,7 +25,7 @@ namespace RotaChecker.WPFUI
             foreach(DateTime date in _selectedDates)
             {
                 TextBlock text = new TextBlock();
-                text.Text = date.ToString();
+                text.Text = date.ToLongDateString();
                 DatesStackPanel.Children.Add(text);
             }
         }
@@ -74,6 +74,10 @@ namespace RotaChecker.WPFUI
             (Application.Current.MainWindow as MainWindow).PopulateGrid();
             Close();
 
+        }
+        private void OnClick_Cancel(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
     }
 }

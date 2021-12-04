@@ -6,29 +6,32 @@
         xmlns:local="clr-namespace:RotaChecker.WPFUI"
         mc:Ignorable="d"
         Title="AddTemplateToRotaConfirmation" Height="450" Width="800">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="20"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="20"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="20"/>
-        </Grid.ColumnDefinitions>
+    <ScrollViewer>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="20"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="20"/>
+            </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center">
-            <TextBlock Text="Do you want to add the below template to the following dates?"/>
-            <TextBlock Text="{Binding CurrentTemplate.Name}"/>
-            <StackPanel x:Name="DatesStackPanel">
-                
+            <StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center">
+                <TextBlock Text="Do you want to add the below template to the following dates?" FontSize="12pt" Margin="0,0,0,5"/>
+                <TextBlock Text="{Binding CurrentTemplate.Name}" Margin="0,0,0,5"/>
+                <StackPanel x:Name="DatesStackPanel">
+
+                </StackPanel>
+                <TextBlock x:Name="ErrorMessage" Margin="0,0,0,10" Foreground="Red"/>
+                <Separator Margin="0,10,0,10"/>
+                <Grid>
+                    <Button Content="Cancel" HorizontalAlignment="Left" Click="OnClick_Cancel"/>
+                    <Button Content="Confirm" HorizontalAlignment="Right" Click="OnClick_Confirm"/>
+                </Grid>
             </StackPanel>
-            <TextBlock x:Name="ErrorMessage"/>
-            <DockPanel>
-                <Button Content="Cancel" DockPanel.Dock="Left" Width="50"/>
-                <Button Content="Confirm" DockPanel.Dock="Right" Width="50" Click="OnClick_Confirm"/>
-            </DockPanel>
-        </StackPanel>
-    </Grid>
+        </Grid>
+    </ScrollViewer>
 </Window>

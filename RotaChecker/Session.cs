@@ -12,6 +12,7 @@ namespace RotaChecker
         private TemplateLibrary _templateLibrary;
         private Template _currentTemplate;
         private int _currentYear;
+        private Compliance _complianceChecker;
 
         public Rota CurrentRota 
         {
@@ -58,6 +59,17 @@ namespace RotaChecker
                 OnPropertyChanged(nameof(CanAddTemplate));
             }
         }
+        public Compliance ComplianceChecker
+        {
+            get { return _complianceChecker; }
+            set
+            {
+                _complianceChecker = value;
+                OnPropertyChanged();
+            }
+        }
+
+
         public bool CanAddTemplate => CurrentTemplate != null;
 
         public Session()

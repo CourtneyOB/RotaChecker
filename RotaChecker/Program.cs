@@ -10,15 +10,15 @@ namespace RotaChecker
         {
 
             Rota rota = RotaBuilder.CreateRota();
+            Compliance compliance = new Compliance(rota);
 
-            List<string> text = rota.Describe();
+/*            List<string> text = rota.Describe();
             foreach(string s in text)
             {
                Console.WriteLine(s);
-            }
+            }*/
 
-
-          //  Compliance.CheckAll(rota);
+            compliance.CheckAll();
 
 
         }

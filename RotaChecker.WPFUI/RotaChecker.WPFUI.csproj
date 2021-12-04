@@ -7,7 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Img\fail.png" />
+    <None Remove="Img\pass.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\RotaChecker\RotaChecker.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Img\fail.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Img\pass.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
 </Project>

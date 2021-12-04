@@ -128,10 +128,15 @@ namespace RotaChecker.Classes
                     row = 3;
                     column = i + offset - 21;
                 }
+                else if(i + offset < 35)
+                {
+                    row = 4;
+                    column = i + offset - 28;
+                }
                 else
                 {
                     row = 5;
-                    column = i + offset - 28;
+                    column = i + offset - 35;
                 }
 
                 DaysInMonth.Add(new GridDateCell(dateList[i], column, row));

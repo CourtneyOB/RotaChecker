@@ -9,6 +9,7 @@
         Title="Rota Checker" Height="800" Width="1600">
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static local:Commands.AddToRota}" CanExecute="AddToRota_CanExecute" Executed="AddToRota_Executed"/>
+        <CommandBinding Command="{x:Static local:Commands.RemoveFromRota}" CanExecute="RemoveFromRota_CanExecute" Executed="RemoveFromRota_Executed"/>
     </Window.CommandBindings>
     <Grid>
         <Grid.RowDefinitions>
@@ -20,7 +21,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Content="Menu" Background="AliceBlue" x:Name="TestLabel"/>
+        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Content="Menu" Background="#DEEDF9"/>
 
         <!--Templates-->
         <Grid Grid.Row="1" Grid.Column="0">
@@ -30,7 +31,7 @@
                 <RowDefinition Height="20"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="20"/>
-                <RowDefinition Height="50"/>
+                <RowDefinition Height="30"/>
                 <RowDefinition Height="20"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
@@ -38,69 +39,82 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="20"/>
             </Grid.ColumnDefinitions>
-            <Grid Grid.Row="1" Grid.Column="1">
-                <ListView Name="TemplateListView" ItemsSource="{Binding TemplateLibrary.TemplateList}" SelectedItem="{Binding CurrentTemplate}" Background="LavenderBlush">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <WrapPanel>
-                                <TextBlock Text="{Binding Name}"/>
-                            </WrapPanel>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </Grid>
-            <Grid Grid.Row="3" Grid.Column="1">
-                <ContentControl Content="{Binding CurrentTemplate}">
-                    <ContentControl.Resources>
-                        <DataTemplate DataType="{x:Type classes:ShiftTemplate}">
-                            <StackPanel Background="AntiqueWhite">
-                                <TextBlock Text="Type: Shift"/>
+
+            <Border Grid.Row="1" Grid.Column="1" Background="#DEEDF9" CornerRadius="5">
+                <Grid>
+                    <ListView Name="TemplateListView" ItemsSource="{Binding TemplateLibrary.TemplateList}" SelectedItem="{Binding CurrentTemplate}">
+                        <ListView.Template>
+                            <ControlTemplate>
+                                <Border CornerRadius="5">
+                                    <ItemsPresenter/>
+                                </Border>
+                            </ControlTemplate>
+                        </ListView.Template>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
                                 <WrapPanel>
-                                    <TextBlock Text="Template Name: "/>
                                     <TextBlock Text="{Binding Name}"/>
                                 </WrapPanel>
-                                <WrapPanel>
-                                    <TextBlock Text="Start Time: "/>
-                                    <TextBlock Text="{Binding StartTime}"/>
-                                </WrapPanel>
-                                <WrapPanel>
-                                    <TextBlock Text="Length (Hours): "/>
-                                    <TextBlock Text="{Binding Length}"/>
-                                </WrapPanel>
-                            </StackPanel>
-                        </DataTemplate>
-                        <DataTemplate DataType="{x:Type classes:OnCallTemplate}">
-                            <StackPanel Background="AntiqueWhite">
-                                <TextBlock Text="Type: On Call Period"/>
-                                <WrapPanel>
-                                    <TextBlock Text="Template Name: "/>
-                                    <TextBlock Text="{Binding Name}"/>
-                                </WrapPanel>
-                                <WrapPanel>
-                                    <TextBlock Text="Start Time: "/>
-                                    <TextBlock Text="{Binding StartTime}"/>
-                                </WrapPanel>
-                                <WrapPanel>
-                                    <TextBlock Text="Length (Hours): "/>
-                                    <TextBlock Text="{Binding Length}"/>
-                                </WrapPanel>
-                                <WrapPanel>
-                                    <TextBlock Text="Expected Work Duration (Hours): " Width="Auto"/>
-                                    <TextBlock Text="{Binding ExpectedHours}"/>
-                                </WrapPanel>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ContentControl.Resources>
-                </ContentControl>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </Border>
+            <Border Grid.Row="3" Grid.Column="1" Background="#DEEDF9" CornerRadius="5">
+                <Grid>
+                    <ContentControl Content="{Binding CurrentTemplate}">
+                        <ContentControl.Resources>
+                            <DataTemplate DataType="{x:Type classes:ShiftTemplate}">
+                                <StackPanel>
+                                    <TextBlock Text="Type: Shift"/>
+                                    <WrapPanel>
+                                        <TextBlock Text="Template Name: "/>
+                                        <TextBlock Text="{Binding Name}"/>
+                                    </WrapPanel>
+                                    <WrapPanel>
+                                        <TextBlock Text="Start Time: "/>
+                                        <TextBlock Text="{Binding StartTime}"/>
+                                    </WrapPanel>
+                                    <WrapPanel>
+                                        <TextBlock Text="Length (Hours): "/>
+                                        <TextBlock Text="{Binding Length}"/>
+                                    </WrapPanel>
+                                </StackPanel>
+                            </DataTemplate>
+                            <DataTemplate DataType="{x:Type classes:OnCallTemplate}">
+                                <StackPanel>
+                                    <TextBlock Text="Type: On Call Period"/>
+                                    <WrapPanel>
+                                        <TextBlock Text="Template Name: "/>
+                                        <TextBlock Text="{Binding Name}"/>
+                                    </WrapPanel>
+                                    <WrapPanel>
+                                        <TextBlock Text="Start Time: "/>
+                                        <TextBlock Text="{Binding StartTime}"/>
+                                    </WrapPanel>
+                                    <WrapPanel>
+                                        <TextBlock Text="Length (Hours): "/>
+                                        <TextBlock Text="{Binding Length}"/>
+                                    </WrapPanel>
+                                    <WrapPanel>
+                                        <TextBlock Text="Expected Work Duration (Hours): " Width="Auto"/>
+                                        <TextBlock Text="{Binding ExpectedHours}"/>
+                                    </WrapPanel>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ContentControl.Resources>
+                    </ContentControl>
+                </Grid>
+            </Border>
+            <Grid Grid.Row="5" Grid.Column="1">
+                <Button Click="OnClick_CreateTemplate" Content="New Template" HorizontalAlignment="Center"/>
             </Grid>
-            <Button Grid.Row="5" Grid.Column="1" Click="OnClick_CreateTemplate" Content="New"/>
         </Grid>
 
         <!--Calendar-->
         <Grid Grid.Row="1" Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="20"/>
-                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="20"/>
                 <RowDefinition Height="Auto"/>
@@ -112,52 +126,65 @@
                 <ColumnDefinition Width="20"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Top Bar-->
-            <Grid Grid.Row="1" Grid.Column="1" Background="LavenderBlush">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Button Grid.Column="2" Grid.Row="0" Content="Previous" Width="60" HorizontalAlignment="Center" Click="OnClick_ChangeMonth" x:Name="PreviousMonthButton" Margin="3.0"/>
-                <WrapPanel Grid.Column="3" Grid.Row="0" HorizontalAlignment="Center" Margin="3.0">
-                    <Label Content="{Binding CurrentMonth.DisplayName}"/>
-                    <Label Content="{Binding CurrentYear}"/>
-                </WrapPanel>
-                <Button Grid.Column="4" Grid.Row="0" Content="Next" Width="60" HorizontalAlignment="Center" Click="OnClick_ChangeMonth" x:Name="NextMonthButton" Margin="3.0"/>
-            </Grid>
+            <Border Grid.Row="1" Grid.Column="1" Background="#DEEDF9" CornerRadius="5">
+                <Grid Margin="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <!-- Top Bar-->
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Column="2" Grid.Row="0">
+                            <Button Content="Previous" Width="70" HorizontalAlignment="Center" Click="OnClick_ChangeMonth" x:Name="PreviousMonthButton" Margin="3.0"/>
+                        </Grid>
+                        <WrapPanel Grid.Column="3" Grid.Row="0" HorizontalAlignment="Center" Margin="3.0">
+                            <Label Content="{Binding CurrentMonth.DisplayName}" FontSize="14pt"/>
+                            <Label Content="{Binding CurrentYear}" FontSize="14pt"/>
+                        </WrapPanel>
+                        <Grid Grid.Column="4" Grid.Row="0">
+                            <Button Content="Next" Width="70" HorizontalAlignment="Center" Click="OnClick_ChangeMonth" x:Name="NextMonthButton" Margin="3.0"/>
+                        </Grid>
+                    </Grid>
+                    <!--Generated Grid-->
+                    <Grid Grid.Row="1" x:Name="CalendarGrid">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </Grid>
+            </Border>
 
-            <!--Generated Grid-->
-            <Grid Grid.Row="2" Grid.Column="1" Background="LavenderBlush" x:Name="CalendarGrid">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-            </Grid>
-
-            <DockPanel Grid.Row="4" Grid.Column="1">
-                <Button Content="Add to Rota" DockPanel.Dock="Right" Width="100" Command="{x:Static local:Commands.AddToRota}"/>
-            </DockPanel>
-            
+            <WrapPanel Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right">
+                <Button Content="Remove Shift" Command="{x:Static local:Commands.RemoveFromRota}" Margin="0,0,5,0" Height="30"/>
+                <Button Content="Add to Rota" Command="{x:Static local:Commands.AddToRota}" Margin="0,0,5,0"/>
+                <Button Content="Finished" Click="OnClick_OpenCompliance"/>
+            </WrapPanel>
+           
         </Grid>
     </Grid>
 </Window>

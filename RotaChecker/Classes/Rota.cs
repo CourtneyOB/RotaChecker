@@ -20,7 +20,7 @@ namespace RotaChecker.Classes
         public Rota()
         {
             Duties = new List<WorkDuty>();
-
+            RotaStartTime = DateTime.Now;
         }        
 
         public List<string> Describe()
@@ -129,12 +129,14 @@ namespace RotaChecker.Classes
 
             CanAddShift(s);
                 
-            Duties.Add(s);   
+            Duties.Add(s);
+            Duties = Duties.OrderBy(d => d.StartTime).ToList();
             RotaStartTime = Duties.Select(d => d.StartTime).Min(); 
             RotaEndTime = Duties.Select(d => d.EndTime).Max(); 
             Length = RotaEndTime - RotaStartTime; 
             WeekNumberStart = Calendar.GetWeekOfYear(RotaStartTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
             WeekNumberEnd = Calendar.GetWeekOfYear(RotaEndTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
+
 
         }
         public void AddOnCall(OnCallPeriod o)
@@ -144,6 +146,7 @@ namespace RotaChecker.Classes
 
 
             Duties.Add(o);
+            Duties = Duties.OrderBy(d => d.StartTime).ToList();
             RotaStartTime = Duties.Select(d => d.StartTime).Min();
             RotaEndTime = Duties.Select(d => d.EndTime).Max();
             Length = RotaEndTime - RotaStartTime;
