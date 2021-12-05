@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using RotaChecker.Classes;
 
-namespace RotaChecker
+namespace RotaChecker.Classes
 {
     public class Shift : WorkDuty
     {
@@ -13,7 +12,7 @@ namespace RotaChecker
         public bool EveningFinish { get; }
 
 
-        public Shift(DateTime start, DateTime end) : base(start, end)
+        public Shift(DateTime start, DateTime end, string templateName = null) : base(start, end, templateName)
         {
 
             Night = CheckNight(start, end);

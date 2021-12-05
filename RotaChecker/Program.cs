@@ -10,20 +10,15 @@ namespace RotaChecker
         {
 
             Rota rota = RotaBuilder.CreateRota();
+            Compliance compliance = new Compliance(rota);
 
 /*            List<string> text = rota.Describe();
             foreach(string s in text)
             {
                Console.WriteLine(s);
-            }
-*/
+            }*/
 
-
-            //Length of rota period to be checking - affects average weekly hours
-            //Console.WriteLine($"The rota starts at {rota.RotaStartTime} and ends at {rota.RotaEndTime}. The length is {rota.Length.TotalDays} days");
-
-
-            //Compliance.CheckAll(rota);
+            compliance.CheckAll();
 
 
         }

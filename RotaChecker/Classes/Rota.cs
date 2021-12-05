@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Globalization;
-using RotaChecker.Classes;
 
-namespace RotaChecker
+namespace RotaChecker.Classes
 {
     public class Rota : CalendarBase
     {
@@ -21,7 +20,7 @@ namespace RotaChecker
         public Rota()
         {
             Duties = new List<WorkDuty>();
-
+            RotaStartTime = DateTime.Now;
         }        
 
         public List<string> Describe()
@@ -70,46 +69,39 @@ namespace RotaChecker
             return response;
         }
 
-        public void AddShift(Shift s)
+        public void CanAddShift(Shift s)
         {
-
-            if(DateTime.Compare(s.StartTime, s.EndTime) >= 0)
+            if (DateTime.Compare(s.StartTime, s.EndTime) >= 0)
             {
                 throw new ArgumentException("Start time must be before end time");
             }
-            
+
             List<Shift> shiftsInRota = GetShifts();
 
-            foreach(Shift shift in shiftsInRota)
+            foreach (Shift shift in shiftsInRota)
             {
-                if(shift.StartTime <= s.StartTime && s.StartTime < shift.EndTime)
+                if (shift.StartTime <= s.StartTime && s.StartTime < shift.EndTime)
                 {
                     throw new ArgumentException("New shift overlaps with existing shift");
                 }
-                else if(shift.EndTime >= s.EndTime && s.EndTime > shift.StartTime)
+                else if (shift.EndTime >= s.EndTime && s.EndTime > shift.StartTime)
+                {
+                    throw new ArgumentException("New shift overlaps with existing shift");
+                }
+                else if (shift.StartTime >= s.StartTime && s.EndTime >= shift.EndTime)
                 {
                     throw new ArgumentException("New shift overlaps with existing shift");
                 }
             }
-                
-            Duties.Add(s);   
-            RotaStartTime = Duties.Select(d => d.StartTime).Min(); 
-            RotaEndTime = Duties.Select(d => d.EndTime).Max(); 
-            Length = RotaEndTime - RotaStartTime; 
-            WeekNumberStart = Calendar.GetWeekOfYear(RotaStartTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
-            WeekNumberEnd = Calendar.GetWeekOfYear(RotaEndTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
-
         }
-
-        public void AddOnCall(OnCallPeriod o)
+        public void CanAddOnCall(OnCallPeriod o)
         {
-
             if (DateTime.Compare(o.StartTime, o.EndTime) >= 0)
             {
                 throw new ArgumentException("Start time must be before end time");
             }
 
-            if(o.ExpectedHours.TotalHours <= 0)
+            if (o.ExpectedHours.TotalHours <= 0)
             {
                 throw new ArgumentException("Expected hours must be more than 0");
             }
@@ -126,10 +118,35 @@ namespace RotaChecker
                 {
                     throw new ArgumentException("New on call overlaps with existing on call");
                 }
+                else if (onCall.StartTime >= o.StartTime && o.EndTime >= onCall.EndTime)
+                {
+                    throw new ArgumentException("New on call overlaps with existing shift");
+                }
             }
+        }
+        public void AddShift(Shift s)
+        {
+
+            CanAddShift(s);
+                
+            Duties.Add(s);
+            Duties = Duties.OrderBy(d => d.StartTime).ToList();
+            RotaStartTime = Duties.Select(d => d.StartTime).Min(); 
+            RotaEndTime = Duties.Select(d => d.EndTime).Max(); 
+            Length = RotaEndTime - RotaStartTime; 
+            WeekNumberStart = Calendar.GetWeekOfYear(RotaStartTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
+            WeekNumberEnd = Calendar.GetWeekOfYear(RotaEndTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
+
+
+        }
+        public void AddOnCall(OnCallPeriod o)
+        {
+
+            CanAddOnCall(o);
 
 
             Duties.Add(o);
+            Duties = Duties.OrderBy(d => d.StartTime).ToList();
             RotaStartTime = Duties.Select(d => d.StartTime).Min();
             RotaEndTime = Duties.Select(d => d.EndTime).Max();
             Length = RotaEndTime - RotaStartTime;
@@ -138,35 +155,45 @@ namespace RotaChecker
             WeekNumberEnd = Calendar.GetWeekOfYear(RotaEndTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
         }
 
-        public List<Shift> GetShifts()
+        public void AddTemplateToDateList(Template t, List<DateTime> dates)
         {
-
-            List<Shift> shiftsInRota = new List<Shift>();
-            foreach (WorkDuty d in Duties)
+            foreach (DateTime d in dates)
             {
-                if (d.GetType() == typeof(Shift))
+                if (t is ShiftTemplate)
                 {
-                    shiftsInRota.Add((Shift)d);
+                    DateTime startTime = new DateTime(d.Year, d.Month, d.Day, t.StartTime.Hours, t.StartTime.Minutes, 0);
+                    DateTime endTime = startTime.AddHours(t.Length);
+                    AddShift(new Shift(startTime, endTime, t.Name));
+                }
+                if (t is OnCallTemplate)
+                {
+                    object o = t.GetType().GetProperty("ExpectedHours")?.GetValue(t, null);
+                    double expectedHours = (double)o;
+
+                    DateTime startTime = new DateTime(d.Year, d.Month, d.Day, t.StartTime.Hours, t.StartTime.Minutes, 0);
+                    DateTime endTime = startTime.AddHours(t.Length);
+                    AddOnCall(new OnCallPeriod(startTime, endTime, TimeSpan.FromHours(expectedHours), t.Name));
                 }
             }
 
+        }
+
+        public List<Shift> GetShifts()
+        {
+            List<Shift> shiftsInRota = Duties.OfType<Shift>().ToList();
             return shiftsInRota;
         }
 
         public List<OnCallPeriod> GetOnCalls()
         {
-            List<OnCallPeriod> onCallInRota = new List<OnCallPeriod>();
-            foreach (WorkDuty d in Duties)
-            {
-                if (d.GetType() == typeof(OnCallPeriod))
-                {
-                    onCallInRota.Add((OnCallPeriod)d);
-                }
-            }
-
+            List<OnCallPeriod> onCallInRota = Duties.OfType<OnCallPeriod>().ToList();
             return onCallInRota;
         }
-
+        
+        public List<WorkDuty> GetDutiesOnDate(DateTime date)
+        {
+            return Duties.Where(d => d.StartTime.Date == date.Date).ToList();
+        }
 
     }
 }

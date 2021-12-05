@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace RotaChecker
+namespace RotaChecker.Classes
 {
     public class OnCallPeriod : WorkDuty
     {
         public TimeSpan ExpectedHours { get; }
 
-        public OnCallPeriod(DateTime start, DateTime end, TimeSpan expectedHours) : base(start, end)
+        public OnCallPeriod(DateTime start, DateTime end, TimeSpan expectedHours, string templateName = null) : base(start, end, templateName)
         {
             ExpectedHours = expectedHours;
 

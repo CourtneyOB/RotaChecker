@@ -1,0 +1,143 @@
+﻿<Window x:Class="RotaChecker.WPFUI.ComplianceWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RotaChecker.WPFUI"
+        mc:Ignorable="d"
+        Title="ComplianceWindow" Height="600" Width="895"
+        Background="#48647A">
+    <ScrollViewer>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="20"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="20"/>
+            </Grid.RowDefinitions>
+
+            <Label Grid.Row="1" Grid.Column="1" Content="Your Compliance Checker Results" FontSize="12pt" Background="#B1BDC7"/>
+            <!--Compliance Results-->
+            <Grid Grid.Row="2" Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="475"/>
+                    <ColumnDefinition Width="350"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Rectangle Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Fill="#DEEDF9"/>
+                <Rectangle Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Fill="#B1BDC7"/>
+                <Rectangle Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Fill="#DEEDF9"/>
+                <Rectangle Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Fill="#B1BDC7"/>
+                <Rectangle Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Fill="#DEEDF9"/>
+                <Rectangle Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Fill="#B1BDC7"/>
+                <Rectangle Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Fill="#DEEDF9"/>
+                <Rectangle Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Fill="#B1BDC7"/>
+                <Rectangle Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Fill="#DEEDF9"/>
+                <Rectangle Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" Fill="#B1BDC7"/>
+                <Rectangle Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2" Fill="#DEEDF9"/>
+                <Rectangle Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="2" Fill="#B1BDC7"/>
+                <Rectangle Grid.Row="12" Grid.Column="0" Grid.ColumnSpan="2" Fill="#DEEDF9"/>
+
+                <WrapPanel Grid.Row="0" Grid.Column="0" Margin="5,5,5,5">
+                    <Image Width="16" Height="16" Margin="0,0,5,0" x:Name="Max48PerWeekImg"/>
+                    <TextBlock TextWrapping="WrapWithOverflow" Text="Max average of 48 hours work per week"/>
+                </WrapPanel>
+                <TextBlock Margin="5,5,5,5" TextWrapping="WrapWithOverflow" Grid.Row="0" Grid.Column="1" x:Name="Max48PerWeek" Text="This is the result"/>
+
+                <WrapPanel Grid.Row="1" Grid.Column="0" Margin="5,5,5,5">
+                    <Image Width="16" Height="16" Margin="0,0,5,0" x:Name="Max72Per168Img"/>
+                    <TextBlock TextWrapping="WrapWithOverflow" Text="Max 72 hours work in 168 hours (7 consecutive days)"/>
+                </WrapPanel>
+                <TextBlock Margin="5,5,5,5" TextWrapping="WrapWithOverflow" Grid.Row="1" Grid.Column="1" x:Name="Max72Per168" Text="This is the result"/>
+
+                <WrapPanel  Grid.Row="2" Grid.Column="0" Margin="5,5,5,5">
+                    <Image Width="16" Height="16" Margin="0,0,5,0" x:Name="Max13HourShiftImg"/>
+                    <TextBlock TextWrapping="WrapWithOverflow" Text="Max 13 hour shift length"/>
+                </WrapPanel>
+                <TextBlock Margin="5,5,5,5" TextWrapping="WrapWithOverflow" Grid.Row="2" Grid.Column="1" x:Name="Max13HourShift" Text="This is the result"/>
+
+                <WrapPanel Grid.Row="3" Grid.Column="0" Margin="5,5,5,5">
+                    <Image Width="16" Height="16" Margin="0,0,5,0" x:Name="Max4LongShiftsImg"/>
+                    <TextBlock TextWrapping="WrapWithOverflow" Text="Max 4 consecutive long shifts/night shifts"/>
+                </WrapPanel>
+                <TextBlock Margin="5,5,5,5" TextWrapping="WrapWithOverflow" Grid.Row="3" Grid.Column="1" x:Name="Max4LongShifts" Text="This is the result"/>
+
+                <WrapPanel Grid.Row="4" Grid.Column="0" Margin="5,5,5,5">
+                    <Image Width="16" Height="16" Margin="0,0,5,0" x:Name="NightRestBreaksImg"/>
+                    <TextBlock TextWrapping="WrapWithOverflow" Text="46 hours rest must be provided at the conclusion of a run of night shifts"/>
+                </WrapPanel>
+                <TextBlock Margin="5,5,5,5" TextWrapping="WrapWithOverflow" Grid.Row="4" Grid.Column="1" x:Name="NightRestBreaks" Text="This is the result"/>
+
+                <WrapPanel Grid.Row="5" Grid.Column="0" Margin="5,5,5,5">
+                    <Image Width="16" Height="16" Margin="0,0,5,0" x:Name="Max7ConsecutiveDaysImg"/>
+                    <TextBlock TextWrapping="WrapWithOverflow" Text="Max 7 consecutive shifts or working days (except low intensity on-call)"/>
+                </WrapPanel>
+                <TextBlock Margin="5,5,5,5" TextWrapping="WrapWithOverflow" Grid.Row="5" Grid.Column="1" x:Name="Max7ConsecutiveDays" Text="This is the result"/>
+
+                <WrapPanel Grid.Row="6" Grid.Column="0" Margin="5,5,5,5">
+                    <Image Width="16" Height="16" Margin="0,0,5,0" x:Name="AtLeast11HoursRestImg"/>
+                    <TextBlock TextWrapping="WrapWithOverflow" Text="At least 11 hours continuous rest between rostered shifts"/>
+                </WrapPanel>
+                <TextBlock Margin="5,5,5,5" TextWrapping="WrapWithOverflow" Grid.Row="6" Grid.Column="1" x:Name="AtLeast11HoursRest" Text="This is the result"/>
+
+                <WrapPanel Grid.Row="7" Grid.Column="0" Margin="5,5,5,5">
+                    <Image Width="16" Height="16" Margin="0,0,5,0" x:Name="WeekendFrequencyImg"/>
+                    <TextBlock TextWrapping="WrapWithOverflow" Text="Max frequency of 1 in 2 weekends"/>
+                </WrapPanel>
+                <TextBlock Margin="5,5,5,5" TextWrapping="WrapWithOverflow" Grid.Row="7" Grid.Column="1" x:Name="WeekendFrequency" Text="This is the result"/>
+
+                <WrapPanel Grid.Row="8" Grid.Column="0" Margin="5,5,5,5">
+                    <Image Width="16" Height="16" Margin="0,0,5,0" x:Name="Max24HourOnCallImg"/>
+                    <TextBlock TextWrapping="WrapWithOverflow" Text="Max 24 hour on-call period"/>
+                </WrapPanel>
+                <TextBlock Margin="5,5,5,5" TextWrapping="WrapWithOverflow" Grid.Row="8" Grid.Column="1" x:Name="Max24HourOnCall" Text="This is the result"/>
+
+                <WrapPanel Grid.Row="9" Grid.Column="0" Margin="5,5,5,5">
+                    <Image Width="16" Height="16" Margin="0,0,5,0" x:Name="NoConsecutiveOnCallPeriodsImg"/>
+                    <TextBlock TextWrapping="WrapWithOverflow" Text="No consecutive on-call periods other than Saturday and Sunday"/>
+                </WrapPanel>
+                <TextBlock Margin="5,5,5,5" TextWrapping="WrapWithOverflow" Grid.Row="9" Grid.Column="1" x:Name="NoConsecutiveOnCallPeriods" Text="This is the result"/>
+
+                <WrapPanel Grid.Row="10" Grid.Column="0" Margin="5,5,5,5">
+                    <Image Width="16" Height="16" Margin="0,0,5,0" x:Name="NoMoreThan3OnCallsIn7DaysImg"/>
+                    <TextBlock TextWrapping="WrapWithOverflow" Text="No more than 3 on-call periods in 7 consecutive days"/>
+                </WrapPanel>
+                <TextBlock Margin="5,5,5,5" TextWrapping="WrapWithOverflow" Grid.Row="10" Grid.Column="1" x:Name="NoMoreThan3OnCallsIn7Days" Text="This is the result"/>
+
+                <WrapPanel Grid.Row="11" Grid.Column="0" Margin="5,5,5,5">
+                    <Image Width="16" Height="16" Margin="0,0,5,0" x:Name="DayAfterOnCallMustNotHaveWorkLongerThan10HoursImg"/>
+                    <TextBlock TextWrapping="WrapWithOverflow" Text="Day after an on-call period must not have work rostered longer 10 hours"/>
+                </WrapPanel>
+                <TextBlock Margin="5,5,5,5" TextWrapping="WrapWithOverflow" Grid.Row="11" Grid.Column="1" x:Name="DayAfterOnCallMustNotHaveWorkLongerThan10Hours" Text="This is the result"/>
+
+                <WrapPanel Grid.Row="12" Grid.Column="0" Margin="5,5,5,5">
+                    <Image Width="16" Height="16" Margin="0,0,5,0" x:Name="EightHoursRestPer24HourOnCallImg"/>
+                    <TextBlock TextWrapping="WrapWithOverflow" Text="Expected rest of 8 hours per 24 hour on-call period, 5 hours must be continuous between 22:00-07:00"/>
+                </WrapPanel>
+                <TextBlock Margin="5,5,5,5" TextWrapping="WrapWithOverflow" Grid.Row="12" Grid.Column="1" x:Name="EightHoursRestPer24HourOnCall" Text="This is the result"/>
+
+            </Grid>
+
+        </Grid>
+    </ScrollViewer>
+</Window>
