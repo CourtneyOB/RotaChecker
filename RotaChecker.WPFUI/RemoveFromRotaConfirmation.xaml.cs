@@ -29,7 +29,7 @@ namespace RotaChecker.WPFUI
 
         private void OnClick_Confirm(object sender, RoutedEventArgs e)
         {
-            Session.CurrentRota.Duties.Remove(_dutyToRemove);
+            Session.CurrentRota.RemoveDuty(_dutyToRemove);
             (Application.Current.MainWindow as MainWindow).SelectedDates.Clear();
             (Application.Current.MainWindow as MainWindow).ClearGrid();
             (Application.Current.MainWindow as MainWindow).PopulateGrid();

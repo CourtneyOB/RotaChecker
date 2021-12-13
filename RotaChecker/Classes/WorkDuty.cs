@@ -14,7 +14,7 @@ namespace RotaChecker.Classes
         public int WeekNumber { get; }
         public string TemplateName { get; }
 
-        public WorkDuty(DateTime start, DateTime end, string templateName = null)
+        public WorkDuty(DateTime start, DateTime end, int weekYearDifference, string templateName = null)
         {
             StartTime = start;
             EndTime = end;
@@ -32,7 +32,7 @@ namespace RotaChecker.Classes
 
 
             //assign week number
-            WeekNumber = Calendar.GetWeekOfYear(StartTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
+            WeekNumber = Calendar.GetWeekOfYear(start, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday) + weekYearDifference;
 
         }
 

@@ -12,7 +12,7 @@ namespace RotaChecker.Classes
         public bool EveningFinish { get; }
 
 
-        public Shift(DateTime start, DateTime end, string templateName = null) : base(start, end, templateName)
+        public Shift(DateTime start, DateTime end, int weekYearDifference, string templateName = null) : base(start, end, weekYearDifference, templateName)
         {
 
             Night = CheckNight(start, end);

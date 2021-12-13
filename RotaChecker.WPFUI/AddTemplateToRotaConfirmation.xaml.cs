@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using RotaChecker.Classes;
+using System.Linq;
 
 namespace RotaChecker.WPFUI
 {
@@ -22,7 +23,9 @@ namespace RotaChecker.WPFUI
             InitializeComponent();
             _selectedDates = selectedDates;
 
-            foreach(DateTime date in _selectedDates)
+            List<DateTime> orderedDates = _selectedDates.OrderBy(d => d.Date).ToList();
+
+            foreach(DateTime date in orderedDates)
             {
                 TextBlock text = new TextBlock();
                 text.Text = date.ToLongDateString();
@@ -41,7 +44,7 @@ namespace RotaChecker.WPFUI
                     DateTime endTime = startTime.AddHours(Session.CurrentTemplate.Length);
                     try
                     {
-                        Session.CurrentRota.CanAddShift(new Shift(startTime, endTime));
+                        Session.CurrentRota.CanAddShift(new Shift(startTime, endTime, 52 * (startTime.Year - Session.CurrentRota.RotaStartTime.Year)));
                     }
                     catch (ArgumentException exception)
                     {
@@ -58,7 +61,7 @@ namespace RotaChecker.WPFUI
                     DateTime endTime = startTime.AddHours(Session.CurrentTemplate.Length);
                     try
                     {
-                        Session.CurrentRota.CanAddOnCall(new OnCallPeriod(startTime, endTime, TimeSpan.FromHours(expectedHours)));
+                        Session.CurrentRota.CanAddOnCall(new OnCallPeriod(startTime, endTime, TimeSpan.FromHours(expectedHours), 52 * (startTime.Year - Session.CurrentRota.RotaStartTime.Year)));
                     }
                     catch (ArgumentException exception)
                     {

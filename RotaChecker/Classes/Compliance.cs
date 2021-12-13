@@ -124,7 +124,7 @@ namespace RotaChecker.Classes
                 var thisWeekOnCalls = OnCallInRota.Where(y => (DateTime.Compare(startDateTime, y.StartTime) <= 0 && DateTime.Compare(endDateTime, y.StartTime) > 0) || (DateTime.Compare(startDateTime, y.EndTime) < 0 && DateTime.Compare(endDateTime, y.EndTime) >= 0));
 
                 result += $"{thisWeekShifts.Count()} shifts found\n";
-                result += $"{thisWeekOnCalls.Count()} shifts found\n";
+                result += $"{thisWeekOnCalls.Count()} on calls found\n";
                 Console.WriteLine($"{thisWeekShifts.Count()} shifts found");
                 Console.WriteLine($"{thisWeekOnCalls.Count()} on calls found");
 

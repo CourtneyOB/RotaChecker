@@ -125,7 +125,7 @@ namespace RotaChecker.WPFUI
         {
             for(int i = 0; i < 7; i++)
             {
-                for(int j = 0; j < 6; j++)
+                for(int j = 0; j < CalendarGrid.RowDefinitions.Count; j++)
                 {
                     Border border = new Border();
                     SolidColorBrush grey = new SolidColorBrush();

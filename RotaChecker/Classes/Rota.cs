@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Globalization;
+using System.Diagnostics;
+using RotaChecker.Extensions;
 
 namespace RotaChecker.Classes
 {
@@ -14,6 +16,7 @@ namespace RotaChecker.Classes
         public TimeSpan Length { get; private set; }
         public int WeekNumberStart { get; private set; }
         public int WeekNumberEnd { get; private set; }
+        public int YearDifference => 52 * (RotaEndTime.StartOfWeek().Year - RotaStartTime.Year);
 
         //Methods
 
@@ -134,8 +137,9 @@ namespace RotaChecker.Classes
             RotaStartTime = Duties.Select(d => d.StartTime).Min(); 
             RotaEndTime = Duties.Select(d => d.EndTime).Max(); 
             Length = RotaEndTime - RotaStartTime; 
+
             WeekNumberStart = Calendar.GetWeekOfYear(RotaStartTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
-            WeekNumberEnd = Calendar.GetWeekOfYear(RotaEndTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
+            WeekNumberEnd = Calendar.GetWeekOfYear(RotaEndTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday) + YearDifference;
 
 
         }
@@ -152,7 +156,20 @@ namespace RotaChecker.Classes
             Length = RotaEndTime - RotaStartTime;
 
             WeekNumberStart = Calendar.GetWeekOfYear(RotaStartTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
-            WeekNumberEnd = Calendar.GetWeekOfYear(RotaEndTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
+            WeekNumberEnd = Calendar.GetWeekOfYear(RotaEndTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday) + YearDifference;
+        }
+
+        public void RemoveDuty(WorkDuty d)
+        {
+            Duties.Remove(d);
+
+            Duties = Duties.OrderBy(d => d.StartTime).ToList();
+            RotaStartTime = Duties.Select(d => d.StartTime).Min();
+            RotaEndTime = Duties.Select(d => d.EndTime).Max();
+            Length = RotaEndTime - RotaStartTime;
+
+            WeekNumberStart = Calendar.GetWeekOfYear(RotaStartTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
+            WeekNumberEnd = Calendar.GetWeekOfYear(RotaEndTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday) + YearDifference;
         }
 
         public void AddTemplateToDateList(Template t, List<DateTime> dates)
@@ -163,7 +180,7 @@ namespace RotaChecker.Classes
                 {
                     DateTime startTime = new DateTime(d.Year, d.Month, d.Day, t.StartTime.Hours, t.StartTime.Minutes, 0);
                     DateTime endTime = startTime.AddHours(t.Length);
-                    AddShift(new Shift(startTime, endTime, t.Name));
+                    AddShift(new Shift(startTime, endTime, 52 * (startTime.StartOfWeek().Year - RotaStartTime.Year), t.Name));
                 }
                 if (t is OnCallTemplate)
                 {
@@ -172,7 +189,7 @@ namespace RotaChecker.Classes
 
                     DateTime startTime = new DateTime(d.Year, d.Month, d.Day, t.StartTime.Hours, t.StartTime.Minutes, 0);
                     DateTime endTime = startTime.AddHours(t.Length);
-                    AddOnCall(new OnCallPeriod(startTime, endTime, TimeSpan.FromHours(expectedHours), t.Name));
+                    AddOnCall(new OnCallPeriod(startTime, endTime, TimeSpan.FromHours(expectedHours), 52 * (startTime.StartOfWeek().Year - RotaStartTime.Year), t.Name));
                 }
             }
 
